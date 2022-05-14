@@ -8,6 +8,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 //
+builder.Configuration
+	.SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+	.AddJsonFile($"appsettings.json")
+	.AddJsonFile($"appsettings.{builder.Configuration.GetSection("Environments").Value}.json");
+
 builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
 builder.Services.AddDbContext<AppDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -32,5 +37,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+PrebDb.PrepSqlServerDatabase(app);
 
 app.Run();
