@@ -3,26 +3,22 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Blogvio.WebApi.Models
 {
-	public class Post
+	public class Blog
 	{
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int Id { get; set; }
 
 		[Required]
-		[MaxLength(200)]
-		public string Content { get; set; }
+		public string Url { get; set; }
 
 		[Required]
 		[DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-		public DateTime PublishedAt { get; set; }
-
-		public DateTime UpdatedAt { get; set; }
+		public DateTime CreatedAt { get; set; }
 
 		[Required]
 		public bool IsDeleted { get; set; }
 
-		public Blog Blog { get; set; } = new();
-		public ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();
+		public ICollection<Post> Posts { get; set; } = new HashSet<Post>();
 	}
 }
