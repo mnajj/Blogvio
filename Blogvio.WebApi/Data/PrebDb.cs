@@ -19,10 +19,11 @@ namespace Blogvio.WebApi.Data
 			try
 			{
 				context.Database.Migrate();
+				Log.Information("Migrations applied successfully");
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine($"Couldn't run migrations: {ex.Message}");
+				Log.Information($"Couldn't run migrations: {ex.Message}");
 			}
 		}
 	}
