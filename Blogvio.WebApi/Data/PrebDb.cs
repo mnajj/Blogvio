@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace Blogvio.WebApi.Data
 {
@@ -14,7 +15,7 @@ namespace Blogvio.WebApi.Data
 
 		private static void MigrateSqlServer(AppDbContext context)
 		{
-			Console.WriteLine("--> Applying Migrations...");
+			Log.Information("Applying Migrations...");
 			try
 			{
 				context.Database.Migrate();
