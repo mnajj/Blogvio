@@ -28,8 +28,10 @@ namespace Blogvio.WebApi.Repositories
 
 		public async Task<Blog> GetBlogAsync(int id)
 		{
-			var blog = await _context.Blogs.Where(b => b.Id == id).FirstOrDefaultAsync();
-			return blog;
+			return await _context
+				.Blogs
+				.Where(b => b.Id == id)
+				.FirstOrDefaultAsync();
 		}
 
 		public async Task<IEnumerable<Blog>> GetBlogsAsync()
