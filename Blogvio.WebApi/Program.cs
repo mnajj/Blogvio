@@ -1,5 +1,6 @@
 using Blogvio.WebApi.Data;
 using Blogvio.WebApi.Models;
+using Blogvio.WebApi.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -39,6 +40,7 @@ builder.Host.UseSerilog((ctx, lc) => lc
 builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
 builder.Services.AddDbContext<AppDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddSingleton<IBlogRepository, BlogRepository>();
 //
 
 builder.Services.AddControllers();
