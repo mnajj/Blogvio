@@ -9,6 +9,9 @@ namespace Blogvio.WebApi.Profiles
 		public BlogProfile()
 		{
 			CreateMap<Blog, BlogReadDto>();
+			CreateMap<BlogCreateDto, Blog>();
+			CreateMap<BlogCreateDto, BlogReadDto>();
+			CreateMap<Blog, BlogUpdateDto>();
 		}
 	}
 }

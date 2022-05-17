@@ -13,16 +13,19 @@ namespace Blogvio.WebApi.Repositories
 			_context = context;
 		}
 
-		public void CreateBlogAsync(Blog blog)
+		public async Task CreateBlogAsync(Blog blog)
 		{
 			_context.Blogs.AddAsync(blog);
+			await Task.CompletedTask;
 		}
 
 		public async Task DeleteBlog(int id)
 		{
-			Blog blog = new Blog() { Id = id };
-			_context.Blogs.Attach(blog);
-			_context.Blogs.Remove(blog);
+			//Blog blog = new Blog() { Id = id };
+			//_context.Blogs.Attach(blog);
+			//_context.Blogs.Remove(blog);
+			var blog = await GetBlogAsync(id);
+			blog.IsDeleted = true;
 			await Task.CompletedTask;
 		}
 
