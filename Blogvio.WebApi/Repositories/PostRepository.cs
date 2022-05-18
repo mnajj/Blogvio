@@ -15,27 +15,41 @@ namespace Blogvio.WebApi.Repositories
 			_context = context;
 			_mapper = mapper;
 		}
-		public async Task CreatePostAsync(Post post)
+		public async Task CreatePostAsync(int blogId, Post post)
 		{
+			if (post is null)
+			{
+				throw new ArgumentNullException(nameof(post));
+			}
+			post.BlogId = blogId;
 			await _context.Posts.AddAsync(post);
 		}
 
 		public async Task DeletePostAsync(int id)
 		{
-			var post = await GetPostByIdAsync(id);
+			var post = await _context.Posts
+				.FirstOrDefaultAsync(p =>
+					p.Id == id &&
+					p.IsDeleted == false);
 			post.IsDeleted = true;
 		}
 
-		public async Task<Post> GetPostByIdAsync(int id)
+		public async Task<Post> GetPostAsync(int blogId, int postId)
 		{
 			return await _context
 				.Posts
-				.FirstOrDefaultAsync(p => p.Id == id);
+				.FirstOrDefaultAsync(p =>
+					p.BlogId == blogId &&
+					p.Id == postId &&
+					p.IsDeleted == false);
 		}
 
-		public async Task<IEnumerable<Post>> GetPostsAsync()
+		public async Task<IEnumerable<Post>> GetPostsForBlogAsync(int blogId)
 		{
-			return await _context.Posts.ToListAsync();
+			return await _context.Posts
+				.Where(p => p.BlogId == blogId
+				&& p.IsDeleted == false)
+				.ToListAsync();
 		}
 
 		public async Task<bool> SaveChanges()
@@ -43,11 +57,14 @@ namespace Blogvio.WebApi.Repositories
 			return (await _context.SaveChangesAsync() >= 0);
 		}
 
-		public async Task UpdatePostAsync(Post post)
+		public async Task UpdatePostAsync(int blogId, Post post)
 		{
 			_context.Entry(
 				await _context.Posts
-					.FirstOrDefaultAsync(p => p.Id == post.Id)
+					.FirstOrDefaultAsync(p =>
+						p.Id == post.Id &&
+						p.BlogId == blogId &&
+						p.IsDeleted == false)
 				)
 				.CurrentValues
 				.SetValues(post);

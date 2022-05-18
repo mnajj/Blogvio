@@ -23,12 +23,12 @@ namespace Blogvio.UnitTests
 		{
 			// Arrange
 			var expectedPosts = CreateRandomPostsList();
-			RepoStub.Setup(r => r.GetPostsAsync())
+			RepoStub.Setup(r => r.GetPostsForBlogAsync(It.IsAny<int>()))
 				.ReturnsAsync(expectedPosts);
 			var controller = new PostController(RepoStub.Object, MapperStub.Object);
 
 			// Act
-			var result = await controller.GetPostsAsync();
+			var result = await controller.GetPostsForBlogAsync(It.IsAny<int>());
 
 			// Assert
 			var postDto = result.Value as List<PostReadDto>;

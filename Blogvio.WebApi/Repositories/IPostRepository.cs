@@ -4,10 +4,10 @@ namespace Blogvio.WebApi.Repositories
 {
 	public interface IPostRepository
 	{
-		Task<IEnumerable<Post>> GetPostsAsync();
-		Task<Post> GetPostByIdAsync(int id);
-		Task CreatePostAsync(Post post);
-		Task UpdatePostAsync(Post post);
+		Task<IEnumerable<Post>> GetPostsForBlogAsync(int blogId);
+		Task<Post> GetPostAsync(int blogId, int postId);
+		Task CreatePostAsync(int blogId, Post post);
+		Task UpdatePostAsync(int blogId, Post post);
 		Task DeletePostAsync(int id);
 		Task<bool> SaveChanges();
 	}

@@ -19,10 +19,10 @@ namespace Blogvio.WebApi.Controllers
 			_mapper = mapper;
 		}
 
-		[HttpGet]
-		public async Task<ActionResult<IEnumerable<PostReadDto>>> GetPostsAsync()
+		[HttpGet("{blogId}")]
+		public async Task<ActionResult<IEnumerable<PostReadDto>>> GetPostsForBlogAsync(int blogId)
 		{
-			var posts = await _repository.GetPostsAsync();
+			var posts = await _repository.GetPostsForBlogAsync(blogId);
 			return Ok(_mapper.Map<IEnumerable<PostReadDto>>(posts));
 		}
 	}

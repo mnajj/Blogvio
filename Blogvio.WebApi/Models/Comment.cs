@@ -21,6 +21,9 @@ namespace Blogvio.WebApi.Models
 		[Required]
 		public bool IsDeleted { get; set; }
 
+		[ForeignKey("Post")]
+		public int PostId { get; set; }
+
 		public Post Post { get; set; } = new();
 	}
 }

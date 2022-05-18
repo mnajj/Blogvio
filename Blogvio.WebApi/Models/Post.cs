@@ -22,6 +22,9 @@ namespace Blogvio.WebApi.Models
 		[Required]
 		public bool IsDeleted { get; set; }
 
+		[ForeignKey("Blog")]
+		public int BlogId { get; set; }
+
 		public Blog Blog { get; set; } = new();
 		public ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();
 	}
