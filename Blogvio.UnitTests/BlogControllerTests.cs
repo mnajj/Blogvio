@@ -40,7 +40,7 @@ namespace Blogvio.UnitTests
 		public async void GetBlogAsync_WithUnexistingItem_ReturnsNotFound()
 		{
 			// Arrange
-			RepoStub.Setup(repo => repo.GetBlogAsync(new Random().Next()))
+			RepoStub.Setup(repo => repo.GetBlogAsync(It.IsAny<int>()))
 				.ReturnsAsync((Blog)null);
 
 			var ctr = new BlogController(RepoStub.Object, MapperStub.Object);
@@ -57,7 +57,7 @@ namespace Blogvio.UnitTests
 		{
 			// Arrange
 			var expectedBlog = CreateRandomBlog();
-			RepoStub.Setup(repo => repo.GetBlogAsync(new Random().Next()))
+			RepoStub.Setup(repo => repo.GetBlogAsync(It.IsAny<int>()))
 				.ReturnsAsync(expectedBlog);
 
 			var ctr = new BlogController(RepoStub.Object, MapperStub.Object);
