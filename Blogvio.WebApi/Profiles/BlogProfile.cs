@@ -11,7 +11,7 @@ namespace Blogvio.WebApi.Profiles
 			CreateMap<Blog, BlogReadDto>();
 			CreateMap<BlogCreateDto, Blog>();
 			CreateMap<BlogCreateDto, BlogReadDto>();
-			CreateMap<Blog, BlogUpdateDto>();
+			CreateMap<BlogUpdateDto, Blog>();
 		}
 	}
 }
