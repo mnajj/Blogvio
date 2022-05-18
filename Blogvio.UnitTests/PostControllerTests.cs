@@ -35,33 +35,53 @@ namespace Blogvio.UnitTests
 			result.Value.Should().BeEquivalentTo(postDto);
 		}
 
+		[Fact]
+		public async void GetPostAsync_WithEistingPost_ReturnsPost()
+		{
+			// Arrange
+			var sendePost = CreateRandomPost();
+			var expectedPostDto = MapperStub.Object.Map<PostReadDto>(sendePost);
+
+			RepoStub.Setup(r => r.BlogExist(It.IsAny<int>()))
+				.ReturnsAsync(true);
+
+			RepoStub.Setup(r => r.GetPostAsync(It.IsAny<int>(), It.IsAny<int>()))
+				.ReturnsAsync(sendePost);
+
+			var controller = new PostController(RepoStub.Object, MapperStub.Object);
+
+			// Act
+			var result = await controller.GetPostAsync(RandomNumber.Next(), RandomNumber.Next());
+
+			// Assert
+			result.Value.Should().BeEquivalentTo(expectedPostDto);
+		}
+
+		private Post CreateRandomPost()
+			=> new()
+			{
+				Id = RandomNumber.Next(),
+				PublishedAt = DateTime.Now,
+				UpdatedAt = DateTime.Now,
+				Content = Guid.NewGuid().ToString(),
+				IsDeleted = false
+			};
+
 		private IEnumerable<Post> CreateRandomPostsList() =>
 			new List<Post>()
 			{
-				new Post()
-				{
-					Id = RandomNumber.Next(),
-					PublishedAt = DateTime.Now,
-					UpdatedAt = DateTime.Now,
-					Content = Guid.NewGuid().ToString(),
-					IsDeleted = false
-				},
-				new Post()
-				{
-					Id = RandomNumber.Next(),
-					PublishedAt = DateTime.Now,
-					UpdatedAt = DateTime.Now,
-					Content = Guid.NewGuid().ToString(),
-					IsDeleted = false
-				},
-				new Post()
-				{
-					Id = RandomNumber.Next(),
-					PublishedAt = DateTime.Now,
-					UpdatedAt = DateTime.Now,
-					Content = Guid.NewGuid().ToString(),
-					IsDeleted = false
-				}
+				CreateRandomPost(),
+				CreateRandomPost(),
+				CreateRandomPost()
+			};
+
+		private PostReadDto CreateRandomPostReadDto()
+			=> new()
+			{
+				Id = RandomNumber.Next(),
+				PublishedAt = DateTime.Now,
+				UpdatedAt = DateTime.Now,
+				Content = Guid.NewGuid().ToString(),
 			};
 	}
 }

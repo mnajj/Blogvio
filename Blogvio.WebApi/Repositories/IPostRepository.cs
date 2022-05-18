@@ -9,6 +9,7 @@ namespace Blogvio.WebApi.Repositories
 		Task CreatePostAsync(int blogId, Post post);
 		Task UpdatePostAsync(int blogId, Post post);
 		Task DeletePostAsync(int id);
+		Task<bool> BlogExist(int blogId);
 		Task<bool> SaveChanges();
 	}
 }

@@ -57,6 +57,7 @@ namespace Blogvio.UnitTests
 		{
 			// Arrange
 			var expectedBlog = CreateRandomBlog();
+
 			RepoStub.Setup(repo => repo.GetBlogAsync(It.IsAny<int>()))
 				.ReturnsAsync(expectedBlog);
 

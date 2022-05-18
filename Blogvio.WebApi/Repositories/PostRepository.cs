@@ -69,5 +69,12 @@ namespace Blogvio.WebApi.Repositories
 				.CurrentValues
 				.SetValues(post);
 		}
+
+		public async Task<bool> BlogExist(int blogId)
+		{
+			return await _context
+				.Blogs
+				.AnyAsync(b => b.Id == blogId);
+		}
 	}
 }
