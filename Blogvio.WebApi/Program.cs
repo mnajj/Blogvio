@@ -6,37 +6,15 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Exceptions;
 
-//Log.Logger = new LoggerConfiguration()
-//		.WriteTo.Console()
-//		.CreateBootstrapLogger();
-
-//Log.Information("Starting up");
-
-//try
-//{
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 //
 builder.Configuration
 	.SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
 	.AddJsonFile($"appsettings.json")
 	.AddJsonFile($"appsettings.{builder.Configuration.GetSection("Environments").Value}.json");
 
-//var config = new ConfigurationBuilder()
-//	.SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-//	.AddJsonFile($"appsettings.json")
-//	.AddJsonFile($"appsettings.{builder.Configuration.GetSection("Environments").Value}.json")
-//	.Build();
-
-//Log.Logger = new LoggerConfiguration()
-//	.ReadFrom.Configuration(config)
-//	.CreateLogger();
-
-//builder.Host.UseSerilog((ctx, lc) => lc
-//		.WriteTo.Console()
-//		.ReadFrom.Configuration(ctx.Configuration));
 ConfigureLogs();
 builder.Host.UseSerilog();
 
@@ -73,26 +51,15 @@ app.MapControllers();
 PrebDb.PrepSqlServerDatabase(app);
 
 app.Run();
-//}
-//catch (Exception ex)
-//{
-//	Log.Fatal(ex, "Application failed to start!");
-//}
-//finally
-//{
-//	Log.Information("Shut down...");
-//	Log.CloseAndFlush();
-//}
 
 #region Helper
 void ConfigureLogs()
 {
-	// Create Logger
 	Log.Logger = new LoggerConfiguration()
-			.Enrich.FromLogContext()
-			.Enrich.WithExceptionDetails()
-			.WriteTo.Debug()
-			.WriteTo.Console()
-			.CreateLogger();
+		.Enrich.FromLogContext()
+		.Enrich.WithExceptionDetails()
+		.WriteTo.Debug()
+		.WriteTo.Console()
+		.CreateLogger();
 }
 #endregion
