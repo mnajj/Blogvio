@@ -4,12 +4,13 @@ using Blogvio.WebApi.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Serilog.Exceptions;
 
-Log.Logger = new LoggerConfiguration()
-		.WriteTo.Console()
-		.CreateBootstrapLogger();
+//Log.Logger = new LoggerConfiguration()
+//		.WriteTo.Console()
+//		.CreateBootstrapLogger();
 
-Log.Information("Starting up");
+//Log.Information("Starting up");
 
 //try
 //{
@@ -33,9 +34,11 @@ builder.Configuration
 //	.ReadFrom.Configuration(config)
 //	.CreateLogger();
 
-builder.Host.UseSerilog((ctx, lc) => lc
-		.WriteTo.Console()
-		.ReadFrom.Configuration(ctx.Configuration));
+//builder.Host.UseSerilog((ctx, lc) => lc
+//		.WriteTo.Console()
+//		.ReadFrom.Configuration(ctx.Configuration));
+ConfigureLogs();
+builder.Host.UseSerilog();
 
 builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -80,3 +83,16 @@ app.Run();
 //	Log.Information("Shut down...");
 //	Log.CloseAndFlush();
 //}
+
+#region Helper
+void ConfigureLogs()
+{
+	// Create Logger
+	Log.Logger = new LoggerConfiguration()
+			.Enrich.FromLogContext()
+			.Enrich.WithExceptionDetails()
+			.WriteTo.Debug()
+			.WriteTo.Console()
+			.CreateLogger();
+}
+#endregion
