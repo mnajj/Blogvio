@@ -12,8 +12,8 @@ namespace Blogvio.WebApi.Models
 		[Required]
 		public string Url { get; set; }
 
-		[DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-		public DateTime? CreatedAt { get; set; }
+		[Required]
+		public DateTime CreatedAt { get; set; } = DateTime.Now;
 
 		[Required]
 		public bool IsDeleted { get; set; }

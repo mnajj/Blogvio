@@ -15,11 +15,10 @@ namespace Blogvio.WebApi.Repositories
 
 		public async Task CreateBlogAsync(Blog blog)
 		{
-			_context.Blogs.AddAsync(blog);
-			await Task.CompletedTask;
+			await _context.Blogs.AddAsync(blog);
 		}
 
-		public async Task DeleteBlog(int id)
+		public async Task DeleteBlogAsync(int id)
 		{
 			//Blog blog = new Blog() { Id = id };
 			//_context.Blogs.Attach(blog);
@@ -33,29 +32,28 @@ namespace Blogvio.WebApi.Repositories
 		{
 			return await _context
 				.Blogs
-				.Where(b => b.Id == id)
+				.Where(b => b.Id == id &&
+				!b.IsDeleted)
 				.FirstOrDefaultAsync();
 		}
 
 		public async Task<IEnumerable<Blog>> GetBlogsAsync()
 		{
-			var blogs = await _context.Blogs.ToListAsync();
-			return blogs;
+			return await _context.Blogs.ToListAsync();
 		}
 
-		public async Task<bool> SaveChanges()
+		public async Task<bool> SaveChangesAsync()
 		{
 			return (await _context.SaveChangesAsync() >= 0);
 		}
 
-		public async Task UpdateBlog(Blog blog)
+		public async Task UpdateBlogAsync(Blog blog)
 		{
 			_context.Entry(
 				await _context.Blogs
 					.FirstOrDefaultAsync(b => b.Id == blog.Id))
 				.CurrentValues
 				.SetValues(blog);
-			await Task.CompletedTask;
 		}
 	}
 }

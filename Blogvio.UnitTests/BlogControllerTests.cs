@@ -29,7 +29,7 @@ namespace Blogvio.UnitTests
 			var ctr = new BlogController(RepoStub.Object, MapperStub.Object);
 
 			// Act
-			var res = await ctr.GetBlogs();
+			var res = await ctr.GetBlogsAsync();
 
 			// Assert
 			var blogsDto = res.Value as List<BlogReadDto>;
@@ -46,7 +46,7 @@ namespace Blogvio.UnitTests
 			var ctr = new BlogController(RepoStub.Object, MapperStub.Object);
 
 			// Act
-			var res = await ctr.GetBlogById(new Random().Next());
+			var res = await ctr.GetBlogByIdAsync(new Random().Next());
 
 			// Assert
 			Assert.IsType<NotFoundResult>(res.Result);
@@ -64,7 +64,7 @@ namespace Blogvio.UnitTests
 			var ctr = new BlogController(RepoStub.Object, MapperStub.Object);
 
 			// Act
-			var result = await ctr.GetBlogById(new Random().Next());
+			var result = await ctr.GetBlogByIdAsync(new Random().Next());
 
 			// Assert
 			var blogDto = result.Value as BlogReadDto;
@@ -90,7 +90,7 @@ namespace Blogvio.UnitTests
 			var ctr = new BlogController(RepoStub.Object, mapper);
 
 			// Act
-			var result = await ctr.CreateBlog(blogToCreate);
+			var result = await ctr.CreateBlogAsync(blogToCreate);
 
 			// Assert
 			var createdBlog = result.Value;
@@ -109,6 +109,8 @@ namespace Blogvio.UnitTests
 
 			RepoStub.Setup(r => r.GetBlogAsync(It.IsAny<int>()))
 				.ReturnsAsync(existingBlog);
+			RepoStub.Setup(r => r.SaveChangesAsync())
+				.ReturnsAsync(true);
 			var config = new MapperConfiguration(cfg =>
 			{
 				cfg.CreateMap<BlogUpdateDto, Blog>();
@@ -118,7 +120,7 @@ namespace Blogvio.UnitTests
 			var ctr = new BlogController(RepoStub.Object, mapper);
 
 			// Act
-			var result = await ctr.UpdateBlog(existingBlog.Id, blogToUpdate);
+			var result = await ctr.UpdateBlogAsync(existingBlog.Id, blogToUpdate);
 
 			// Assert
 			result.Should().BeOfType<NoContentResult>();
@@ -142,7 +144,7 @@ namespace Blogvio.UnitTests
 			var ctr = new BlogController(RepoStub.Object, mapper);
 
 			// Act
-			var result = await ctr.UpdateBlog(existingBlog.Id, blogToUpdate);
+			var result = await ctr.UpdateBlogAsync(existingBlog.Id, blogToUpdate);
 
 			// Assert
 			result.Should().BeOfType<NotFoundResult>();
@@ -156,11 +158,13 @@ namespace Blogvio.UnitTests
 
 			RepoStub.Setup(r => r.GetBlogAsync(It.IsAny<int>()))
 				.ReturnsAsync(existingBlog);
+			RepoStub.Setup(r => r.SaveChangesAsync())
+				.ReturnsAsync(true);
 
 			var ctr = new BlogController(RepoStub.Object, MapperStub.Object);
 
 			// Act
-			var result = await ctr.DeleteBlog(existingBlog.Id);
+			var result = await ctr.DeleteBlogAsync(existingBlog.Id);
 
 			// Assert
 			result.Should().BeOfType<NoContentResult>();

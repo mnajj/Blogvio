@@ -30,8 +30,7 @@ namespace Blogvio.WebApi.Controllers
 		[HttpGet("{postId}", Name = "GetPostAsync")]
 		public async Task<ActionResult<PostReadDto>> GetPostAsync(int blogId, int postId)
 		{
-			var isBlogExist = await _repository.BlogExist(blogId);
-			if (!isBlogExist)
+			if (!await _repository.BlogExist(blogId))
 			{
 				return NotFound();
 			}
@@ -46,8 +45,7 @@ namespace Blogvio.WebApi.Controllers
 		[HttpPost]
 		public async Task<ActionResult<PostReadDto>> CreatePostAsync(int blogId, PostCreateDto postCreateDto)
 		{
-			var isBlogExist = await _repository.BlogExist(blogId);
-			if (!isBlogExist)
+			if (!await _repository.BlogExist(blogId))
 			{
 				return NotFound();
 			}
@@ -61,15 +59,16 @@ namespace Blogvio.WebApi.Controllers
 			return CreatedAtRoute(nameof(GetPostAsync), new { blogId = blogId, postId = postReadDto.Id }, postReadDto);
 		}
 
-		[HttpPut]
-		public async Task<ActionResult> UpdatePostAsync(int blogId, PostUpdateDto postUpdateDto)
+		[HttpPut("{postId}")]
+		public async Task<ActionResult> UpdatePostAsync(int blogId, int postId, PostUpdateDto postUpdateDto)
 		{
-			var isBlogExist = await _repository.BlogExist(blogId);
-			if (!isBlogExist)
+			if (!await _repository.BlogExist(blogId) ||
+						await _repository.GetPostAsync(blogId, postId) is null)
 			{
 				return NotFound();
 			}
 			var post = _mapper.Map<Post>(postUpdateDto);
+			post.Id = postId;
 			await _repository.UpdatePostAsync(blogId, post);
 			if (!await _repository.SaveChangesAsync())
 			{

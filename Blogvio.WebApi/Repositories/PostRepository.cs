@@ -42,14 +42,14 @@ namespace Blogvio.WebApi.Repositories
 				.FirstOrDefaultAsync(p =>
 					p.BlogId == blogId &&
 					p.Id == postId &&
-					p.IsDeleted == false);
+					!p.IsDeleted);
 		}
 
 		public async Task<IEnumerable<Post>> GetPostsForBlogAsync(int blogId)
 		{
 			return await _context.Posts
 				.Where(p => p.BlogId == blogId
-				&& p.IsDeleted == false)
+				&& !p.IsDeleted)
 				.ToListAsync();
 		}
 
@@ -60,22 +60,30 @@ namespace Blogvio.WebApi.Repositories
 
 		public async Task UpdatePostAsync(int blogId, Post post)
 		{
-			_context.Entry(
-				await _context.Posts
+			var exPost = await _context.Posts
 					.FirstOrDefaultAsync(p =>
 						p.Id == post.Id &&
 						p.BlogId == blogId &&
-						p.IsDeleted == false)
-				)
-				.CurrentValues
-				.SetValues(post);
+						p.IsDeleted == false);
+			exPost.Content = post.Content;
+			exPost.UpdatedAt = DateTime.Now;
+			//_context.Entry(
+			//	await _context.Posts
+			//		.FirstOrDefaultAsync(p =>
+			//			p.Id == post.Id &&
+			//			p.BlogId == blogId &&
+			//			!p.IsDeleted)
+			//	)
+			//	.CurrentValues
+			//	.SetValues(post);
 		}
 
 		public async Task<bool> BlogExist(int blogId)
 		{
 			return await _context
 				.Blogs
-				.AnyAsync(b => b.Id == blogId);
+				.AnyAsync(b => b.Id == blogId &&
+					!b.IsDeleted);
 		}
 	}
 }

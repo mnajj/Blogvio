@@ -24,36 +24,39 @@ namespace Blogvio.WebApi.Controllers
 		}
 
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<BlogReadDto>>> GetBlogs()
+		public async Task<ActionResult<IEnumerable<BlogReadDto>>> GetBlogsAsync()
 		{
 			var blogs = await _repository.GetBlogsAsync();
 			return Ok(_mapper.Map<IEnumerable<BlogReadDto>>(blogs));
 		}
 
-		[HttpGet("{id}", Name = "GetBlogById")]
-		public async Task<ActionResult<BlogReadDto>> GetBlogById(int id)
+		[HttpGet("{id}", Name = "GetBlogByIdAsync")]
+		public async Task<ActionResult<BlogReadDto>> GetBlogByIdAsync(int id)
 		{
 			var blog = await _repository.GetBlogAsync(id);
-			if (blog is not null)
+			if (blog is null)
 			{
-				var blogReadDto = _mapper.Map<BlogReadDto>(blog);
-				return Ok(blogReadDto);
+				return NotFound();
 			}
-			return NotFound();
+			var blogReadDto = _mapper.Map<BlogReadDto>(blog);
+			return Ok(blogReadDto);
 		}
 
 		[HttpPost]
-		public async Task<ActionResult<BlogReadDto>> CreateBlog(BlogCreateDto blogDto)
+		public async Task<ActionResult<BlogReadDto>> CreateBlogAsync(BlogCreateDto blogDto)
 		{
 			var blogModel = _mapper.Map<Blog>(blogDto);
 			await _repository.CreateBlogAsync(blogModel);
-			await _repository.SaveChanges();
+			if (!await _repository.SaveChangesAsync())
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError);
+			}
 			var blogRead = _mapper.Map<BlogReadDto>(blogModel);
-			return CreatedAtRoute(nameof(GetBlogById), new { Id = blogRead.Id }, blogRead);
+			return CreatedAtRoute(nameof(GetBlogByIdAsync), new { Id = blogRead.Id }, blogRead);
 		}
 
 		[HttpPut("{id}")]
-		public async Task<ActionResult> UpdateBlog(int id, BlogUpdateDto updateDto)
+		public async Task<ActionResult> UpdateBlogAsync(int id, BlogUpdateDto updateDto)
 		{
 			var existingBlog = await _repository.GetBlogAsync(id);
 			if (existingBlog is null)
@@ -61,21 +64,27 @@ namespace Blogvio.WebApi.Controllers
 				return NotFound();
 			}
 			var blogModel = _mapper.Map<Blog>(updateDto);
-			await _repository.UpdateBlog(blogModel);
-			await _repository.SaveChanges();
+			await _repository.UpdateBlogAsync(blogModel);
+			if (!await _repository.SaveChangesAsync())
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError);
+			}
 			return NoContent();
 		}
 
 		[HttpDelete("{id}")]
-		public async Task<ActionResult> DeleteBlog(int id)
+		public async Task<ActionResult> DeleteBlogAsync(int id)
 		{
 			var existningBlog = await _repository.GetBlogAsync(id);
 			if (existningBlog is null)
 			{
 				return NotFound();
 			}
-			await _repository.DeleteBlog(id);
-			await _repository.SaveChanges();
+			await _repository.DeleteBlogAsync(id);
+			if (!await _repository.SaveChangesAsync())
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError);
+			}
 			return NoContent();
 		}
 	}

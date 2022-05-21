@@ -7,8 +7,8 @@ namespace Blogvio.WebApi.Repositories
 		Task<IEnumerable<Blog>> GetBlogsAsync();
 		Task<Blog> GetBlogAsync(int id);
 		Task CreateBlogAsync(Blog blog);
-		Task UpdateBlog(Blog blog);
-		Task DeleteBlog(int id);
-		Task<bool> SaveChanges();
+		Task UpdateBlogAsync(Blog blog);
+		Task DeleteBlogAsync(int id);
+		Task<bool> SaveChangesAsync();
 	}
 }

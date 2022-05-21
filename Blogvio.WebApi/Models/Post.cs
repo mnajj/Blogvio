@@ -14,7 +14,6 @@ namespace Blogvio.WebApi.Models
 		public string Content { get; set; }
 
 		[Required]
-		[DatabaseGenerated(DatabaseGeneratedOption.Computed)]
 		public DateTime PublishedAt { get; set; } = DateTime.Now;
 
 		public DateTime? UpdatedAt { get; set; }

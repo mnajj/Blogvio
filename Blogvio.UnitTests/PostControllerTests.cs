@@ -7,7 +7,6 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using Xunit;
 
@@ -129,7 +128,8 @@ namespace Blogvio.UnitTests
 			var result = await controller.CreatePostAsync(RandomNumber.Next(), postToCreate);
 
 			// Assert
-			result.Value.Should().BeEquivalentTo(result.Value,
+			result.Value.Should().BeEquivalentTo(
+				result.Value,
 				opts => opts.ComparingByMembers<PostCreateDto>().ExcludingMissingMembers());
 		}
 
@@ -137,11 +137,14 @@ namespace Blogvio.UnitTests
 		public async void UpdatePostAsync_WithPostToUpdate_ReturnsNoContent()
 		{
 			// Arrange
+			var post = CreateRandomPost();
 			var postToUpdate = CreateRandomUpdatePostDto();
 			var expectedPostDto = MapperStub.Object.Map<PostReadDto>(postToUpdate);
 
 			RepoStub.Setup(r => r.BlogExist(It.IsAny<int>()))
 				.ReturnsAsync(true);
+			RepoStub.Setup(r => r.GetPostAsync(It.IsAny<int>(), It.IsAny<int>()))
+				.ReturnsAsync(post);
 			RepoStub.Setup(r => r.SaveChangesAsync()).ReturnsAsync(true);
 
 			var config = new MapperConfiguration(cfg =>
@@ -153,7 +156,7 @@ namespace Blogvio.UnitTests
 			var controller = new PostController(RepoStub.Object, mapper);
 
 			// Act
-			var result = await controller.UpdatePostAsync(RandomNumber.Next(), postToUpdate);
+			var result = await controller.UpdatePostAsync(RandomNumber.Next(), RandomNumber.Next(), postToUpdate);
 
 			// Assert
 			result.Should().BeOfType<NoContentResult>();
@@ -164,6 +167,7 @@ namespace Blogvio.UnitTests
 		{
 			// Arrange
 			var post = CreateRandomPost();
+
 			RepoStub.Setup(r => r.BlogExist(It.IsAny<int>()))
 				.ReturnsAsync(true);
 			RepoStub.Setup(r => r.GetPostAsync(It.IsAny<int>(), It.IsAny<int>()))
