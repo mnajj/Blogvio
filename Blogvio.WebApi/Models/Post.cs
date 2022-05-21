@@ -15,9 +15,9 @@ namespace Blogvio.WebApi.Models
 
 		[Required]
 		[DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-		public DateTime PublishedAt { get; set; }
+		public DateTime PublishedAt { get; set; } = DateTime.Now;
 
-		public DateTime UpdatedAt { get; set; }
+		public DateTime? UpdatedAt { get; set; }
 
 		[Required]
 		public bool IsDeleted { get; set; }
@@ -25,7 +25,7 @@ namespace Blogvio.WebApi.Models
 		[ForeignKey("Blog")]
 		public int BlogId { get; set; }
 
-		public Blog Blog { get; set; } = new();
-		public ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();
+		public Blog Blog { get; set; }
+		public virtual ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();
 	}
 }

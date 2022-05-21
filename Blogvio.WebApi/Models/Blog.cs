@@ -18,6 +18,6 @@ namespace Blogvio.WebApi.Models
 		[Required]
 		public bool IsDeleted { get; set; }
 
-		public ICollection<Post> Posts { get; set; } = new HashSet<Post>();
+		public virtual ICollection<Post> Posts { get; set; } = new HashSet<Post>();
 	}
 }

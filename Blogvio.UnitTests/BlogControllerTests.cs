@@ -153,7 +153,6 @@ namespace Blogvio.UnitTests
 		{
 			// Arrange
 			var existingBlog = CreateRandomBlog();
-			var blogToDelte = CreateRandomBlog();
 
 			RepoStub.Setup(r => r.GetBlogAsync(It.IsAny<int>()))
 				.ReturnsAsync(existingBlog);

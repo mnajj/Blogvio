@@ -24,6 +24,6 @@ namespace Blogvio.WebApi.Models
 		[ForeignKey("Post")]
 		public int PostId { get; set; }
 
-		public Post Post { get; set; } = new();
+		public virtual Post Post { get; set; }
 	}
 }

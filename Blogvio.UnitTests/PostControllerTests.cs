@@ -32,22 +32,22 @@ namespace Blogvio.UnitTests
 			var result = await controller.GetPostsForBlogAsync(It.IsAny<int>());
 
 			// Assert
-			var postDto = result.Value as List<PostReadDto>;
-			result.Value.Should().BeEquivalentTo(postDto);
+			result.Value.Should().BeEquivalentTo(
+				result.Value as List<PostReadDto>,
+				opts => opts.ComparingByMembers<Post>().ExcludingMissingMembers());
 		}
 
 		[Fact]
 		public async void GetPostAsync_WithEistingPost_ReturnsPost()
 		{
 			// Arrange
-			var sendePost = CreateRandomPost();
-			var expectedPostDto = MapperStub.Object.Map<PostReadDto>(sendePost);
+			var post = CreateRandomPost();
 
 			RepoStub.Setup(r => r.BlogExist(It.IsAny<int>()))
 				.ReturnsAsync(true);
 
 			RepoStub.Setup(r => r.GetPostAsync(It.IsAny<int>(), It.IsAny<int>()))
-				.ReturnsAsync(sendePost);
+				.ReturnsAsync(post);
 
 			var controller = new PostController(RepoStub.Object, MapperStub.Object);
 
@@ -55,7 +55,9 @@ namespace Blogvio.UnitTests
 			var result = await controller.GetPostAsync(RandomNumber.Next(), RandomNumber.Next());
 
 			// Assert
-			result.Value.Should().BeEquivalentTo(expectedPostDto);
+			result.Value.Should().BeEquivalentTo(
+				result.Value,
+				opts => opts.ComparingByMembers<Post>().ExcludingMissingMembers());
 		}
 
 		[Fact]
@@ -102,14 +104,101 @@ namespace Blogvio.UnitTests
 			Assert.IsType<NotFoundResult>(result.Result);
 		}
 
+		[Fact]
+		public async void CreatePostAsync_WithPostToCreate_ReturnsPostReadDto()
+		{
+			// Arrange
+			var postToCreate = CreateRandomCreatePost();
+			var expectedPostDto = MapperStub.Object.Map<PostReadDto>(postToCreate);
+
+			RepoStub.Setup(r => r.BlogExist(It.IsAny<int>()))
+				.ReturnsAsync(true);
+
+			RepoStub.Setup(r => r.SaveChangesAsync()).ReturnsAsync(true);
+
+			var config = new MapperConfiguration(cfg =>
+			{
+				cfg.CreateMap<PostCreateDto, Post>();
+				cfg.CreateMap<Post, PostReadDto>();
+			});
+			var mapper = config.CreateMapper();
+
+			var controller = new PostController(RepoStub.Object, mapper);
+
+			// Act
+			var result = await controller.CreatePostAsync(RandomNumber.Next(), postToCreate);
+
+			// Assert
+			result.Value.Should().BeEquivalentTo(result.Value,
+				opts => opts.ComparingByMembers<PostCreateDto>().ExcludingMissingMembers());
+		}
+
+		[Fact]
+		public async void UpdatePostAsync_WithPostToUpdate_ReturnsNoContent()
+		{
+			// Arrange
+			var postToUpdate = CreateRandomUpdatePostDto();
+			var expectedPostDto = MapperStub.Object.Map<PostReadDto>(postToUpdate);
+
+			RepoStub.Setup(r => r.BlogExist(It.IsAny<int>()))
+				.ReturnsAsync(true);
+			RepoStub.Setup(r => r.SaveChangesAsync()).ReturnsAsync(true);
+
+			var config = new MapperConfiguration(cfg =>
+			{
+				cfg.CreateMap<PostUpdateDto, Post>();
+			});
+			var mapper = config.CreateMapper();
+
+			var controller = new PostController(RepoStub.Object, mapper);
+
+			// Act
+			var result = await controller.UpdatePostAsync(RandomNumber.Next(), postToUpdate);
+
+			// Assert
+			result.Should().BeOfType<NoContentResult>();
+		}
+
+		[Fact]
+		public async void DeletePostAsync_WithPostToDelete_ReturnsNoContent()
+		{
+			// Arrange
+			var post = CreateRandomPost();
+			RepoStub.Setup(r => r.BlogExist(It.IsAny<int>()))
+				.ReturnsAsync(true);
+			RepoStub.Setup(r => r.GetPostAsync(It.IsAny<int>(), It.IsAny<int>()))
+				.ReturnsAsync(post);
+			RepoStub.Setup(r => r.SaveChangesAsync()).ReturnsAsync(true);
+			var controller = new PostController(RepoStub.Object, MapperStub.Object);
+
+			// Act
+			var result = await controller.DeltePostAsync(post.BlogId, post.Id);
+
+			// Assert
+			result.Should().BeOfType<NoContentResult>();
+		}
+
 		private Post CreateRandomPost()
 			=> new()
 			{
 				Id = RandomNumber.Next(),
+				BlogId = RandomNumber.Next(),
 				PublishedAt = DateTime.Now,
 				UpdatedAt = DateTime.Now,
 				Content = Guid.NewGuid().ToString(),
 				IsDeleted = false
+			};
+
+		private PostCreateDto CreateRandomCreatePost()
+			=> new()
+			{
+				Content = Guid.NewGuid().ToString()
+			};
+
+		private PostUpdateDto CreateRandomUpdatePostDto()
+			=> new()
+			{
+				Content = Guid.NewGuid().ToString(),
 			};
 
 		private IEnumerable<Post> CreateRandomPostsList() =>

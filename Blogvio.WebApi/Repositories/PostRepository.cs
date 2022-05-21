@@ -15,6 +15,7 @@ namespace Blogvio.WebApi.Repositories
 			_context = context;
 			_mapper = mapper;
 		}
+
 		public async Task CreatePostAsync(int blogId, Post post)
 		{
 			if (post is null)
@@ -52,7 +53,7 @@ namespace Blogvio.WebApi.Repositories
 				.ToListAsync();
 		}
 
-		public async Task<bool> SaveChanges()
+		public async Task<bool> SaveChangesAsync()
 		{
 			return (await _context.SaveChangesAsync() >= 0);
 		}
