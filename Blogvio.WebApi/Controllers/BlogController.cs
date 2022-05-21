@@ -13,16 +13,14 @@ namespace Blogvio.WebApi.Controllers
 	{
 		private readonly IBlogRepository _repository;
 		private readonly IMapper _mapper;
-		private readonly ILogger<BlogController> _logger;
 
 		public BlogController(
 			IBlogRepository repository,
-			IMapper mapper,
-			ILogger<BlogController> logger)
+			IMapper mapper
+		)
 		{
 			_repository = repository;
 			_mapper = mapper;
-			_logger = logger;
 		}
 
 		[HttpGet]

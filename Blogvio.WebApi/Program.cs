@@ -9,22 +9,17 @@ using Serilog.Exceptions;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-//
-builder.Configuration
-	.SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-	.AddJsonFile($"appsettings.json")
-	.AddJsonFile($"appsettings.{builder.Configuration.GetSection("Environments").Value}.json");
-
+#region CustomServices
+ConfigureAppSettingsFile();
 ConfigureLogs();
 builder.Host.UseSerilog();
-
 builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
 builder.Services.AddDbContext<AppDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<IBlogRepository, BlogRepository>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-//
+#endregion
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -61,5 +56,14 @@ void ConfigureLogs()
 		.WriteTo.Debug()
 		.WriteTo.Console()
 		.CreateLogger();
+}
+
+void ConfigureAppSettingsFile()
+{
+	var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+	builder.Configuration
+	.SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+	.AddJsonFile($"appsettings.json")
+	.AddJsonFile($"appsettings.{env}.json");
 }
 #endregion

@@ -36,6 +36,10 @@ namespace Blogvio.WebApi.Controllers
 				return NotFound();
 			}
 			var post = await _repository.GetPostAsync(blogId, postId);
+			if (post is null)
+			{
+				return NotFound();
+			}
 			return Ok(_mapper.Map<PostReadDto>(post));
 		}
 	}
