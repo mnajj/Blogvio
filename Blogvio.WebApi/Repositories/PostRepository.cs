@@ -91,13 +91,13 @@ namespace Blogvio.WebApi.Repositories
 
 		public async Task<IEnumerable<Post>> SearchForPostAsync(string keyword)
 		{
-			return (IEnumerable<Post>)await _elasticClient
+			return (await _elasticClient
 				.SearchAsync<Post>(s =>
 					s.Query(q =>
 						q.QueryString(d =>
 							d.Query('*' + keyword + '*')))
 							.Size(1000)
-							);
+							)).Documents.ToList();
 		}
 	}
 }
