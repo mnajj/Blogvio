@@ -14,5 +14,13 @@
 			public const string UpdateBlogAsync = "{id}";
 			public const string DeleteBlogAsync = "{id}";
 		}
+
+		public static class Post
+		{
+			public const string PostBase = Base + "/post/{blogId}";
+			public const string GetPostAsync = "{postId}";
+			public const string UpdatePostAsync = "{postId}";
+			public const string DeletePostAsync = "{postId}";
+		}
 	}
 }

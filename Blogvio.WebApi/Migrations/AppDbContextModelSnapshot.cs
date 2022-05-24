@@ -117,7 +117,7 @@ namespace Blogvio.WebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Blogs");
+                    b.ToTable("Blogs", (string)null);
                 });
 
             modelBuilder.Entity("Blogvio.WebApi.Models.Comment", b =>
@@ -150,7 +150,7 @@ namespace Blogvio.WebApi.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comments", (string)null);
                 });
 
             modelBuilder.Entity("Blogvio.WebApi.Models.Post", b =>
@@ -182,7 +182,7 @@ namespace Blogvio.WebApi.Migrations
 
                     b.HasIndex("BlogId");
 
-                    b.ToTable("Posts");
+                    b.ToTable("Posts", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

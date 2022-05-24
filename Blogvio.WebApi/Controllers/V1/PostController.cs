@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Blogvio.WebApi.Contracts.V1;
 using Blogvio.WebApi.Dtos.Post;
 using Blogvio.WebApi.Models;
 using Blogvio.WebApi.Repositories;
@@ -7,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Blogvio.WebApi.Controllers
 {
-	[Route("api/[controller]/{blogId}/")]
+	[Route(ApiRoutesV1.Post.PostBase)]
 	[ApiController]
 	public class PostController : ControllerBase
 	{
@@ -27,7 +28,7 @@ namespace Blogvio.WebApi.Controllers
 			return Ok(_mapper.Map<IEnumerable<PostReadDto>>(posts));
 		}
 
-		[HttpGet("{postId}", Name = "GetPostAsync")]
+		[HttpGet(ApiRoutesV1.Post.GetPostAsync, Name = "GetPostAsync")]
 		public async Task<ActionResult<PostReadDto>> GetPostAsync(int blogId, int postId)
 		{
 			if (!await _repository.BlogExist(blogId))
@@ -59,7 +60,7 @@ namespace Blogvio.WebApi.Controllers
 			return CreatedAtRoute(nameof(GetPostAsync), new { blogId = blogId, postId = postReadDto.Id }, postReadDto);
 		}
 
-		[HttpPut("{postId}")]
+		[HttpPut(ApiRoutesV1.Post.UpdatePostAsync)]
 		public async Task<ActionResult> UpdatePostAsync(int blogId, int postId, PostUpdateDto postUpdateDto)
 		{
 			if (!await _repository.BlogExist(blogId) ||
@@ -77,7 +78,7 @@ namespace Blogvio.WebApi.Controllers
 			return NoContent();
 		}
 
-		[HttpDelete("{postId}")]
+		[HttpDelete(ApiRoutesV1.Post.DeletePostAsync)]
 		public async Task<ActionResult> DeltePostAsync(int blogId, int postId)
 		{
 			if (!await _repository.BlogExist(blogId))

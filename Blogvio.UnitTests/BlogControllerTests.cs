@@ -174,7 +174,7 @@ namespace Blogvio.UnitTests
 			new()
 			{
 				Id = new Random().Next(),
-				CreatedAt = DateTime.Now,
+				//CreatedAt = DateTime.Now,
 				Url = Guid.NewGuid().ToString(),
 				IsDeleted = false
 			};
@@ -185,19 +185,19 @@ namespace Blogvio.UnitTests
 				new Blog()
 				{
 					Id = new Random().Next(),
-					CreatedAt = DateTime.Now,
+					//CreatedAt = DateTime.Now,
 					Url = Guid.NewGuid().ToString(),
 				},
 				new Blog()
 				{
 					Id = new Random().Next(),
-					CreatedAt = DateTime.Now,
+					//CreatedAt = DateTime.Now,
 					Url = Guid.NewGuid().ToString(),
 				},
 				new Blog()
 				{
 					Id = new Random().Next(),
-					CreatedAt = DateTime.Now,
+					//CreatedAt = DateTime.Now,
 					Url = Guid.NewGuid().ToString(),
 				}
 			};
