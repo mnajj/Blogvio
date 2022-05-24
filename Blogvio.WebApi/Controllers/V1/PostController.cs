@@ -3,7 +3,6 @@ using Blogvio.WebApi.Contracts.V1;
 using Blogvio.WebApi.Dtos.Post;
 using Blogvio.WebApi.Models;
 using Blogvio.WebApi.Repositories;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blogvio.WebApi.Controllers

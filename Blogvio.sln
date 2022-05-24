@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32407.343
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blogvio.WebApi", "Blogvio.WebApi\Blogvio.WebApi.csproj", "{2DFC8807-B836-4983-95CF-9026B6C8044F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blogvio.WebApi", "Blogvio.WebApi\Blogvio.WebApi.csproj", "{2DFC8807-B836-4983-95CF-9026B6C8044F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blogvio.UnitTests", "Blogvio.UnitTests\Blogvio.UnitTests.csproj", "{E31DCAE8-90C5-48AE-8B56-48CBA1D727AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blogvio.UnitTests", "Blogvio.UnitTests\Blogvio.UnitTests.csproj", "{E31DCAE8-90C5-48AE-8B56-48CBA1D727AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
