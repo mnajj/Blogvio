@@ -95,5 +95,17 @@ namespace Blogvio.WebApi.Controllers
 			}
 			return NoContent();
 		}
+
+		[HttpGet(ApiRoutesV1.Post.SearchForPostAsync, Name = "SearchForPostAsync")]
+		public async Task<ActionResult<IEnumerable<PostReadDto>>> SearchForPostAsync(int blogId, string keyword)
+		{
+			if (!await _repository.BlogExist(blogId))
+			{
+				return NotFound();
+			}
+			var results = await _repository.SearchForPostAsync(keyword);
+			var resReadDto = _mapper.Map<IEnumerable<PostReadDto>>(results);
+			return Ok(resReadDto);
+		}
 	}
 }

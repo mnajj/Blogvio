@@ -11,5 +11,8 @@ namespace Blogvio.WebApi.Repositories
 		Task DeletePostAsync(int id);
 		Task<bool> BlogExist(int blogId);
 		Task<bool> SaveChangesAsync();
+
+		// ElasticSearch
+		Task<IEnumerable<Post>> SearchForPostAsync(string keyword);
 	}
 }

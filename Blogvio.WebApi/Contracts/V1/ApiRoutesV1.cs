@@ -21,6 +21,7 @@
 			public const string GetPostAsync = "{postId}";
 			public const string UpdatePostAsync = "{postId}";
 			public const string DeletePostAsync = "{postId}";
+			public const string SearchForPostAsync = "search/{keyword}";
 		}
 	}
 }

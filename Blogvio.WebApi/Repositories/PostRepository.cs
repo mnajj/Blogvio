@@ -2,6 +2,7 @@
 using Blogvio.WebApi.Data;
 using Blogvio.WebApi.Models;
 using Microsoft.EntityFrameworkCore;
+using Nest;
 
 namespace Blogvio.WebApi.Repositories
 {
@@ -9,11 +10,13 @@ namespace Blogvio.WebApi.Repositories
 	{
 		private readonly AppDbContext _context;
 		private readonly IMapper _mapper;
+		private readonly IElasticClient _elasticClient;
 
-		public PostRepository(AppDbContext context, IMapper mapper)
+		public PostRepository(AppDbContext context, IMapper mapper, IElasticClient elasticClient)
 		{
 			_context = context;
 			_mapper = mapper;
+			_elasticClient = elasticClient;
 		}
 
 		public async Task CreatePostAsync(int blogId, Post post)
@@ -84,6 +87,17 @@ namespace Blogvio.WebApi.Repositories
 				.Blogs
 				.AnyAsync(b => b.Id == blogId &&
 					!b.IsDeleted);
+		}
+
+		public async Task<IEnumerable<Post>> SearchForPostAsync(string keyword)
+		{
+			return (IEnumerable<Post>)await _elasticClient
+				.SearchAsync<Post>(s =>
+					s.Query(q =>
+						q.QueryString(d =>
+							d.Query('*' + keyword + '*')))
+							.Size(1000)
+							);
 		}
 	}
 }
