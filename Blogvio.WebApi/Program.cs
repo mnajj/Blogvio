@@ -27,6 +27,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddElasticSearch(builder.Configuration);
+builder.Services.InstallCosmosDb(builder.Configuration);
 
 var app = builder.Build();
 
