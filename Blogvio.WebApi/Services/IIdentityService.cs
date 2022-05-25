@@ -6,5 +6,6 @@ namespace Blogvio.WebApi.Services
 	public interface IIdentityService
 	{
 		Task<AuthenticationModel> RegisterAsync(RegisterDto model);
+		Task<AuthenticationModel> LoginAsync(LoginDto model);
 	}
 }

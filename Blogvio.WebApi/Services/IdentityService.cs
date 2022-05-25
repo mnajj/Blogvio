@@ -65,6 +65,31 @@ namespace Blogvio.WebApi.Services
 			};
 		}
 
+		public async Task<AuthenticationModel> LoginAsync(LoginDto model)
+		{
+			var authModel = new AuthenticationModel();
+
+			var user = await _userManager.FindByEmailAsync(model.Email);
+
+			if (user is null || !await _userManager.CheckPasswordAsync(user, model.Password))
+			{
+				authModel.Message = "Email or Password is incorrect!";
+				return authModel;
+			}
+
+			var jwtSecurityToken = await CreateJwtToken(user);
+			var rolesList = await _userManager.GetRolesAsync(user);
+
+			authModel.IsAuthenticated = true;
+			authModel.Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+			authModel.Email = user.Email;
+			authModel.UserName = user.UserName;
+			authModel.ExpireOn = jwtSecurityToken.ValidTo;
+			authModel.Roles = rolesList.ToList();
+
+			return authModel;
+		}
+
 		private async Task<JwtSecurityToken> CreateJwtToken(AppUser user)
 		{
 			var userClaims = await _userManager.GetClaimsAsync(user);
@@ -78,8 +103,9 @@ namespace Blogvio.WebApi.Services
 			{
 				new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
 				new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+				new Claim("UserId", user.Id),
+				new Claim("UserName", user.UserName),
 				new Claim(JwtRegisteredClaimNames.Email, user.Email),
-				new Claim("uid", user.Id)
 			}
 			.Union(userClaims)
 			.Union(roleClaims);
