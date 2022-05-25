@@ -3,19 +3,20 @@ using Newtonsoft.Json;
 
 namespace Blogvio.WebApi.Models.CosmosModels
 {
-	[CosmosCollection("blogs")]
-	public class CosmosBlog
+	[CosmosCollection("comments")]
+	public class CosmosComment
 	{
 		[CosmosPartitionKey]
 		[JsonProperty("id")]
 		public string Id { get; set; }
 
-		public string Url { get; set; }
+		public string Content { get; set; }
 
-		public DateTime CreatedAt { get; set; } = DateTime.Now;
+		public DateTime PublishedAt { get; set; }
+		public DateTime? UpdatedAt { get; set; }
 
 		public bool IsDeleted { get; set; }
 
-		public ICollection<int> Posts { get; set; }
+		public int PostId { get; set; }
 	}
 }

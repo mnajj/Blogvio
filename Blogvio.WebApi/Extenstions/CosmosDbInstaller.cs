@@ -19,6 +19,8 @@ namespace Blogvio.WebApi.Extenstions
 				);
 
 			services.AddCosmosStore<CosmosBlog>(cosmosStoreSettings);
+			services.AddCosmosStore<CosmosPost>(cosmosStoreSettings);
+			services.AddCosmosStore<CosmosComment>(cosmosStoreSettings);
 		}
 	}
 }
