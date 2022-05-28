@@ -7,5 +7,6 @@ namespace Blogvio.WebApi.Services
 	{
 		Task<AuthenticationModel> RegisterAsync(RegisterDto model);
 		Task<AuthenticationModel> LoginAsync(LoginDto model);
+		Task<AuthenticationModel> RefreshTokenAsync(string token, string refreshToken);
 	}
 }

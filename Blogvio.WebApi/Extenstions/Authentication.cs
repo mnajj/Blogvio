@@ -18,6 +18,17 @@ namespace Blogvio.WebApi.Extenstions
 		{
 			services.Configure<JWT>(configuration.GetSection("JWT"));
 			services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
+			var tokenValidationParameters = new TokenValidationParameters
+			{
+				ValidateIssuerSigningKey = true,
+				ValidateIssuer = true,
+				ValidateAudience = true,
+				ValidateLifetime = true,
+				ValidIssuer = configuration["JWT:Issuer"],
+				ValidAudience = configuration["JWT:Audience"],
+				IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Key"]))
+			};
+			services.AddSingleton(tokenValidationParameters);
 			services.AddAuthentication(options =>
 			{
 				options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -27,16 +38,7 @@ namespace Blogvio.WebApi.Extenstions
 				{
 					options.RequireHttpsMetadata = false;
 					options.SaveToken = false;
-					options.TokenValidationParameters = new TokenValidationParameters
-					{
-						ValidateIssuerSigningKey = true,
-						ValidateIssuer = true,
-						ValidateAudience = true,
-						ValidateLifetime = true,
-						ValidIssuer = configuration["JWT:Issuer"],
-						ValidAudience = configuration["JWT:Audience"],
-						IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Key"]))
-					};
+					options.TokenValidationParameters = tokenValidationParameters;
 				});
 			services.AddScoped<IIdentityService, IdentityService>();
 		}

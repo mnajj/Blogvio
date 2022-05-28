@@ -19,8 +19,6 @@ namespace Blogvio.WebApi.Controllers.V1
 		[HttpPost("register")]
 		public async Task<ActionResult<AuthenticationModel>> RegisterAsync(RegisterDto registerDto)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
 			var result = await _identityService.RegisterAsync(registerDto);
 			if (!result.IsAuthenticated)
 				return BadRequest(result.Message);
@@ -30,9 +28,18 @@ namespace Blogvio.WebApi.Controllers.V1
 		[HttpPost("login")]
 		public async Task<ActionResult<AuthenticationModel>> LoginAsync(LoginDto loginDto)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
 			var result = await _identityService.LoginAsync(loginDto);
+			if (!result.IsAuthenticated)
+			{
+				return BadRequest(result.Message);
+			}
+			return Ok(result);
+		}
+
+		[HttpPost("refresh")]
+		public async Task<ActionResult<AuthenticationModel>> RefreshTokenAsync(RefreshTokenDto refreshTokenDto)
+		{
+			var result = await _identityService.RefreshTokenAsync(refreshTokenDto.Token, refreshTokenDto.RefreshToken);
 			if (!result.IsAuthenticated)
 			{
 				return BadRequest(result.Message);

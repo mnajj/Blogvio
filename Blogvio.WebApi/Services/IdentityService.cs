@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using Blogvio.WebApi.Data;
 using Blogvio.WebApi.Dtos.v1.Identity;
 using Blogvio.WebApi.Models;
 using Blogvio.WebApi.Models.Identity;
 using Blogvio.WebApi.Security;
+using Cosmonaut.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -17,12 +19,21 @@ namespace Blogvio.WebApi.Services
 		private readonly UserManager<AppUser> _userManager;
 		private readonly JWT _jwt;
 		private readonly IMapper _mapper;
+		private readonly TokenValidationParameters _tokenValidationParameters;
+		private readonly AppDbContext _context;
 
-		public IdentityService(UserManager<AppUser> userManager, IOptions<JWT> jwt, IMapper mapper)
+		public IdentityService(
+			UserManager<AppUser> userManager,
+			IOptions<JWT> jwt,
+			IMapper mapper,
+			TokenValidationParameters tokenValidationParameters,
+			AppDbContext context)
 		{
 			_userManager = userManager;
 			_jwt = jwt.Value;
 			_mapper = mapper;
+			_tokenValidationParameters = tokenValidationParameters;
+			_context = context;
 		}
 
 		public async Task<AuthenticationModel> RegisterAsync(RegisterDto model)
@@ -53,7 +64,8 @@ namespace Blogvio.WebApi.Services
 				return new AuthenticationModel { Message = errors };
 			}
 			await _userManager.AddToRoleAsync(user, "User");
-			var jwtSecurityToken = await CreateJwtToken(user);
+			var jwtSecurityToken = await CreateJwtTokenAsync(user);
+			var refreshToken = await CreateRefreshTokenAsync(jwtSecurityToken, user);
 			return new AuthenticationModel
 			{
 				Email = user.Email,
@@ -61,7 +73,8 @@ namespace Blogvio.WebApi.Services
 				IsAuthenticated = true,
 				Roles = new List<string> { "User" },
 				Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
-				ExpireOn = jwtSecurityToken.ValidTo
+				ExpireOn = jwtSecurityToken.ValidTo,
+				RefreshToken = refreshToken.Token
 			};
 		}
 
@@ -77,8 +90,9 @@ namespace Blogvio.WebApi.Services
 				return authModel;
 			}
 
-			var jwtSecurityToken = await CreateJwtToken(user);
+			var jwtSecurityToken = await CreateJwtTokenAsync(user);
 			var rolesList = await _userManager.GetRolesAsync(user);
+			var refreshToken = await CreateRefreshTokenAsync(jwtSecurityToken, user);
 
 			authModel.IsAuthenticated = true;
 			authModel.Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
@@ -90,7 +104,7 @@ namespace Blogvio.WebApi.Services
 			return authModel;
 		}
 
-		private async Task<JwtSecurityToken> CreateJwtToken(AppUser user)
+		private async Task<JwtSecurityToken> CreateJwtTokenAsync(AppUser user)
 		{
 			var userClaims = await _userManager.GetClaimsAsync(user);
 			var roles = await _userManager.GetRolesAsync(user);
@@ -117,10 +131,121 @@ namespace Blogvio.WebApi.Services
 				issuer: _jwt.Issuer,
 				audience: _jwt.Audience,
 				claims: claims,
-				expires: DateTime.Now.AddHours(_jwt.DurationInDays),
+				expires: DateTime.Now.Add(_jwt.TokenLifeTime),
 				signingCredentials: signingCredentials
 			);
 			return jwtSecurityToken;
 		}
+
+		public async Task<AuthenticationModel> RefreshTokenAsync(string token, string refreshToken)
+		{
+			var authModel = new AuthenticationModel();
+			var validatedToken = GetPrincipalFromToken(token);
+			if (validatedToken is null)
+			{
+				authModel.Message = "Invalid Token!";
+				return authModel;
+			}
+			var expiryDateUnix = long.Parse(
+				validatedToken.Claims.Single(x =>
+					x.Type == JwtRegisteredClaimNames.Exp).Value);
+
+			var expiryDateTimeUtc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+				.AddSeconds(expiryDateUnix);
+
+			if (expiryDateTimeUtc > DateTime.UtcNow)
+			{
+				authModel.Message = "Token hasn't expired yet!";
+				return authModel;
+			}
+
+			var jti = validatedToken.Claims.Single(x =>
+					x.Type == JwtRegisteredClaimNames.Jti).Value;
+
+			var storedRefreshToken = await _context.RefreshTokens
+				.SingleOrDefaultAsync(x => x.Token == refreshToken);
+			if (storedRefreshToken is null)
+			{
+				authModel.Message = "Refresh token dosen't exist!";
+				return authModel;
+			}
+			if (DateTime.UtcNow > storedRefreshToken.ExpiresOn)
+			{
+				authModel.Message = "Refresh token has expired!";
+				return authModel;
+			}
+			if (storedRefreshToken.IsInvalidated)
+			{
+				authModel.Message = "Refresh token has been invalidated!";
+				return authModel;
+			}
+			if (storedRefreshToken.IsUsed)
+			{
+				authModel.Message = "Refresh token has been used!";
+				return authModel;
+			}
+			if (storedRefreshToken.JwtId != jti)
+			{
+				authModel.Message = "Refresh token dosen't match the jwt!";
+				return authModel;
+			}
+			storedRefreshToken.IsUsed = true;
+			_context.RefreshTokens.Update(storedRefreshToken);
+			await _context.SaveChangesAsync();
+
+			var user = await _userManager.FindByIdAsync(
+				validatedToken.Claims.Single(x =>
+					x.Type == "id").Value);
+
+			var newToken = await CreateJwtTokenAsync(user);
+			var newRefreshToken = await CreateRefreshTokenAsync(newToken, user);
+
+			var rolesList = await _userManager.GetRolesAsync(user);
+			authModel.IsAuthenticated = true;
+			authModel.Token = new JwtSecurityTokenHandler().WriteToken(newToken);
+			authModel.Email = user.Email;
+			authModel.UserName = user.UserName;
+			authModel.ExpireOn = newToken.ValidTo;
+			authModel.Roles = rolesList.ToList();
+			authModel.RefreshToken = newRefreshToken.Token;
+			return authModel;
+		}
+
+		private async Task<RefreshToken> CreateRefreshTokenAsync(JwtSecurityToken jwtSecurityToken, AppUser user)
+		{
+			var refreshToken = new RefreshToken
+			{
+				JwtId = jwtSecurityToken.Id,
+				UserId = user.Id,
+				CreatedOn = DateTime.UtcNow,
+				ExpiresOn = DateTime.UtcNow.AddMonths(6),
+			};
+			await _context.RefreshTokens.AddAsync(refreshToken);
+			await _context.SaveChangesAsync();
+			return refreshToken;
+		}
+
+		private ClaimsPrincipal GetPrincipalFromToken(string token)
+		{
+			var tokenHandler = new JwtSecurityTokenHandler();
+			try
+			{
+				var Principal = tokenHandler.ValidateToken(token, _tokenValidationParameters, out var validatedToken);
+				if (!IsJwtWithValidSecurityAlgorithm(validatedToken))
+				{
+					return null;
+				}
+				return Principal;
+			}
+			catch (Exception ex)
+			{
+				return null;
+			}
+		}
+
+		private bool IsJwtWithValidSecurityAlgorithm(SecurityToken validatedToken)
+			=> (validatedToken is JwtSecurityToken jwtSecurityToken) &&
+					jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
+						StringComparison.InvariantCultureIgnoreCase);
 	}
 }
