@@ -3,10 +3,9 @@ using Blogvio.WebApi.Contracts.V1;
 using Blogvio.WebApi.Dtos.Blog;
 using Blogvio.WebApi.Models;
 using Blogvio.WebApi.Repositories;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Blogvio.WebApi.Controllers
+namespace Blogvio.WebApi.Controllers.V1
 {
 	[Route(ApiRoutesV1.Blogs.BlogBase)]
 	[ApiController]

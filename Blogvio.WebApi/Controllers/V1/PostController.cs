@@ -5,7 +5,7 @@ using Blogvio.WebApi.Models;
 using Blogvio.WebApi.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Blogvio.WebApi.Controllers
+namespace Blogvio.WebApi.Controllers.V1
 {
 	[Route(ApiRoutesV1.Post.PostBase)]
 	[ApiController]

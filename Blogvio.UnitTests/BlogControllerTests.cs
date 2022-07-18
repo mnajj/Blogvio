@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
 using System.Collections.Generic;
+using Blogvio.WebApi.Controllers.V1;
 using Xunit;
 
 namespace Blogvio.UnitTests

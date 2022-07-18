@@ -30,8 +30,7 @@ namespace Blogvio.WebApi.Repositories
 
 		public async Task<Blog> GetBlogAsync(int id)
 		{
-			return await _context
-				.Blogs
+			return await _context.Blogs
 				.Where(b => b.Id == id &&
 				!b.IsDeleted)
 				.FirstOrDefaultAsync();
@@ -39,7 +38,9 @@ namespace Blogvio.WebApi.Repositories
 
 		public async Task<IEnumerable<Blog>> GetBlogsAsync()
 		{
-			return await _context.Blogs.ToListAsync();
+			return await _context.Blogs
+				.Include(t => t.Posts)
+				.ToListAsync();
 		}
 
 		public async Task<bool> SaveChangesAsync()

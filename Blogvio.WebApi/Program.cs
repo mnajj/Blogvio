@@ -1,9 +1,6 @@
 using Blogvio.WebApi.Data;
 using Blogvio.WebApi.Extenstions;
-using Blogvio.WebApi.Models;
 using Blogvio.WebApi.Repositories;
-using Blogvio.WebApi.Security;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Exceptions;
@@ -18,9 +15,13 @@ builder.Services.AddJWT(builder.Configuration);
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddScoped<IBlogRepository, BlogRepository>();
-builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.Scan(s => 
+	s.FromCallingAssembly()
+		.AddClasses()
+		.AsMatchingInterface()
+		.WithScopedLifetime());
+
 #endregion
 
 builder.Services.AddControllers();
