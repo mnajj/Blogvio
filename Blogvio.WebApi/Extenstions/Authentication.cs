@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Blogvio.WebApi.Models.SQLServerModels;
 
 namespace Blogvio.WebApi.Extenstions
 {

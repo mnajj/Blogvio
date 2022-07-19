@@ -1,5 +1,6 @@
 ﻿using Blogvio.WebApi.Models;
 using Blogvio.WebApi.Models.Identity;
+using Blogvio.WebApi.Models.SQLServerModels;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

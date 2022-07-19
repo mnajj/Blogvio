@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
-namespace Blogvio.WebApi.Models
+namespace Blogvio.WebApi.Models.SQLServerModels
 {
 	public class AppUser : IdentityUser
 	{

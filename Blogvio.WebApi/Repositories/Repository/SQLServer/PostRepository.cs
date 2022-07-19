@@ -4,7 +4,7 @@ using Blogvio.WebApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Nest;
 
-namespace Blogvio.WebApi.Repositories
+namespace Blogvio.WebApi.Repositories.Repository.SQLServer
 {
 	public class PostRepository : IPostRepository
 	{
@@ -70,15 +70,6 @@ namespace Blogvio.WebApi.Repositories
 						p.IsDeleted == false);
 			exPost.Content = post.Content;
 			exPost.UpdatedAt = DateTime.Now;
-			//_context.Entry(
-			//	await _context.Posts
-			//		.FirstOrDefaultAsync(p =>
-			//			p.Id == post.Id &&
-			//			p.BlogId == blogId &&
-			//			!p.IsDeleted)
-			//	)
-			//	.CurrentValues
-			//	.SetValues(post);
 		}
 
 		public async Task<bool> BlogExist(int blogId)

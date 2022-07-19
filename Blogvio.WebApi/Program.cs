@@ -1,4 +1,5 @@
 using Blogvio.WebApi.Data;
+using Blogvio.WebApi.Extensions;
 using Blogvio.WebApi.Extenstions;
 using Blogvio.WebApi.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -8,19 +9,16 @@ using Serilog.Exceptions;
 var builder = WebApplication.CreateBuilder(args);
 
 #region CustomServices
+
 ConfigureAppSettingsFile();
 ConfigureLogs();
 builder.Host.UseSerilog();
+builder.RegisterServices();
 builder.Services.AddJWT(builder.Configuration);
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.Scan(s => 
-	s.FromCallingAssembly()
-		.AddClasses()
-		.AsMatchingInterface()
-		.WithScopedLifetime());
 
 #endregion
 
@@ -54,6 +52,7 @@ PrebDb.PrepSqlServerDatabase(app);
 app.Run();
 
 #region Helper
+
 void ConfigureLogs()
 {
 	Log.Logger = new LoggerConfiguration()
@@ -68,8 +67,9 @@ void ConfigureAppSettingsFile()
 {
 	var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 	builder.Configuration
-	.SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-	.AddJsonFile($"appsettings.json")
-	.AddJsonFile($"appsettings.{env}.json");
+		.SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+		.AddJsonFile($"appsettings.json")
+		.AddJsonFile($"appsettings.{env}.json");
 }
+
 #endregion

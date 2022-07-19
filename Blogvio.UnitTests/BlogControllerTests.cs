@@ -1,14 +1,15 @@
 ﻿using AutoMapper;
-using Blogvio.WebApi.Controllers;
 using Blogvio.WebApi.Dtos.Blog;
 using Blogvio.WebApi.Models;
-using Blogvio.WebApi.Repositories;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
 using System.Collections.Generic;
 using Blogvio.WebApi.Controllers.V1;
+using Blogvio.WebApi.Dtos.Queries;
+using Blogvio.WebApi.Repositories.IRepository;
+using Blogvio.WebApi.Services;
 using Xunit;
 
 namespace Blogvio.UnitTests
@@ -17,6 +18,7 @@ namespace Blogvio.UnitTests
 	{
 		public Mock<IMapper> MapperStub { get; set; } = new Mock<IMapper>();
 		public Mock<IBlogRepository> RepoStub { get; set; } = new Mock<IBlogRepository>();
+		public Mock<IUriService> UriStub { get; set; } = new Mock<IUriService>();
 		public Random RandomNumber { get; set; } = new();
 
 		[Fact]
@@ -24,13 +26,14 @@ namespace Blogvio.UnitTests
 		{
 			var expectedBlogs = CreateRandomBlogsList();
 			// Arrange
-			RepoStub.Setup(repo => repo.GetBlogsAsync())
+			RepoStub.Setup(repo => repo.GetBlogsAsync(new PaginationFilter()))
 				.ReturnsAsync(expectedBlogs);
 
-			var ctr = new BlogController(RepoStub.Object, MapperStub.Object);
+			var ctr = new BlogController(
+				RepoStub.Object, MapperStub.Object, UriStub.Object);
 
 			// Act
-			var res = await ctr.GetBlogsAsync();
+			var res = await ctr.GetBlogsAsync(new PaginationQuery());
 
 			// Assert
 			var blogsDto = res.Value as List<BlogReadDto>;
@@ -44,7 +47,7 @@ namespace Blogvio.UnitTests
 			RepoStub.Setup(repo => repo.GetBlogAsync(It.IsAny<int>()))
 				.ReturnsAsync((Blog)null);
 
-			var ctr = new BlogController(RepoStub.Object, MapperStub.Object);
+			var ctr = new BlogController(RepoStub.Object, MapperStub.Object, UriStub.Object);
 
 			// Act
 			var res = await ctr.GetBlogByIdAsync(new Random().Next());
@@ -62,7 +65,7 @@ namespace Blogvio.UnitTests
 			RepoStub.Setup(repo => repo.GetBlogAsync(It.IsAny<int>()))
 				.ReturnsAsync(expectedBlog);
 
-			var ctr = new BlogController(RepoStub.Object, MapperStub.Object);
+			var ctr = new BlogController(RepoStub.Object, MapperStub.Object, UriStub.Object);
 
 			// Act
 			var result = await ctr.GetBlogByIdAsync(new Random().Next());
@@ -88,7 +91,7 @@ namespace Blogvio.UnitTests
 			});
 			var mapper = config.CreateMapper();
 
-			var ctr = new BlogController(RepoStub.Object, mapper);
+			var ctr = new BlogController(RepoStub.Object, mapper, UriStub.Object);
 
 			// Act
 			var result = await ctr.CreateBlogAsync(blogToCreate);
@@ -98,7 +101,7 @@ namespace Blogvio.UnitTests
 			result.Value.Should().BeEquivalentTo(
 				createdBlog,
 				opts => opts.ComparingByMembers<BlogCreateDto>().ExcludingMissingMembers()
-				);
+			);
 		}
 
 		[Fact]
@@ -112,13 +115,10 @@ namespace Blogvio.UnitTests
 				.ReturnsAsync(existingBlog);
 			RepoStub.Setup(r => r.SaveChangesAsync())
 				.ReturnsAsync(true);
-			var config = new MapperConfiguration(cfg =>
-			{
-				cfg.CreateMap<BlogUpdateDto, Blog>();
-			});
+			var config = new MapperConfiguration(cfg => { cfg.CreateMap<BlogUpdateDto, Blog>(); });
 			var mapper = config.CreateMapper();
 
-			var ctr = new BlogController(RepoStub.Object, mapper);
+			var ctr = new BlogController(RepoStub.Object, mapper, UriStub.Object);
 
 			// Act
 			var result = await ctr.UpdateBlogAsync(existingBlog.Id, blogToUpdate);
@@ -136,13 +136,10 @@ namespace Blogvio.UnitTests
 
 			RepoStub.Setup(r => r.GetBlogAsync(RandomNumber.Next()))
 				.ReturnsAsync(existingBlog);
-			var config = new MapperConfiguration(cfg =>
-			{
-				cfg.CreateMap<BlogUpdateDto, Blog>();
-			});
+			var config = new MapperConfiguration(cfg => { cfg.CreateMap<BlogUpdateDto, Blog>(); });
 			var mapper = config.CreateMapper();
 
-			var ctr = new BlogController(RepoStub.Object, mapper);
+			var ctr = new BlogController(RepoStub.Object, mapper, UriStub.Object);
 
 			// Act
 			var result = await ctr.UpdateBlogAsync(existingBlog.Id, blogToUpdate);
@@ -162,7 +159,7 @@ namespace Blogvio.UnitTests
 			RepoStub.Setup(r => r.SaveChangesAsync())
 				.ReturnsAsync(true);
 
-			var ctr = new BlogController(RepoStub.Object, MapperStub.Object);
+			var ctr = new BlogController(RepoStub.Object, MapperStub.Object, UriStub.Object);
 
 			// Act
 			var result = await ctr.DeleteBlogAsync(existingBlog.Id);

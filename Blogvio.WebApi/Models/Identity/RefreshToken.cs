@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Blogvio.WebApi.Models.SQLServerModels;
 
 namespace Blogvio.WebApi.Models.Identity
 {

@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Blogvio.WebApi.Models.SQLServerModels;
 
 namespace Blogvio.WebApi.Services
 {

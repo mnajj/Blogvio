@@ -1,8 +1,9 @@
 ﻿using Blogvio.WebApi.Data;
 using Blogvio.WebApi.Models;
+using Blogvio.WebApi.Repositories.IRepository;
 using Microsoft.EntityFrameworkCore;
 
-namespace Blogvio.WebApi.Repositories
+namespace Blogvio.WebApi.Repositories.Repository.SQLServer
 {
 	public class BlogRepository : IBlogRepository
 	{
@@ -20,9 +21,6 @@ namespace Blogvio.WebApi.Repositories
 
 		public async Task DeleteBlogAsync(int id)
 		{
-			//Blog blog = new Blog() { Id = id };
-			//_context.Blogs.Attach(blog);
-			//_context.Blogs.Remove(blog);
 			var blog = await GetBlogAsync(id);
 			blog.IsDeleted = true;
 			await Task.CompletedTask;
@@ -36,10 +34,21 @@ namespace Blogvio.WebApi.Repositories
 				.FirstOrDefaultAsync();
 		}
 
-		public async Task<IEnumerable<Blog>> GetBlogsAsync()
+		public async Task<IEnumerable<Blog>> GetBlogsAsync(PaginationFilter? paginationFilter)
 		{
+			if (paginationFilter == null)
+			{
+				return await _context.Blogs
+					.Include(t => t.Posts)
+					.Where(b => !b.IsDeleted)
+					.ToListAsync();
+			}
+			var skip = (paginationFilter.PageNumber - 1) * paginationFilter.PageSize;
 			return await _context.Blogs
 				.Include(t => t.Posts)
+				.Where(b => !b.IsDeleted)
+				.Skip(skip)
+				.Take(paginationFilter.PageSize)
 				.ToListAsync();
 		}
 
