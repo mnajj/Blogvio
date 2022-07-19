@@ -3,7 +3,7 @@ using Cosmonaut;
 using Cosmonaut.Extensions.Microsoft.DependencyInjection;
 using Microsoft.Azure.Documents.Client;
 
-namespace Blogvio.WebApi.Extenstions
+namespace Blogvio.WebApi.Extensions
 {
 	public static class CosmosDbInstaller
 	{
@@ -16,7 +16,7 @@ namespace Blogvio.WebApi.Extenstions
 				configuration["CosmosSettings:AccountUri"],
 				configuration["CosmosSettings:AccountKey"],
 				new ConnectionPolicy()
-				);
+			);
 
 			services.AddCosmosStore<CosmosBlog>(cosmosStoreSettings);
 			services.AddCosmosStore<CosmosPost>(cosmosStoreSettings);

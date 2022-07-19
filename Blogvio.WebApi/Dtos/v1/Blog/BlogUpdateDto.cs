@@ -5,6 +5,6 @@ namespace Blogvio.WebApi.Dtos.Blog
 	public class BlogUpdateDto
 	{
 		[Required]
-		public string Url { get; set; }
+		public string Name { get; set; }
 	}
 }

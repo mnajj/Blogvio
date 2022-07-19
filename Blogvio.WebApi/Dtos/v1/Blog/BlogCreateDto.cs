@@ -5,6 +5,6 @@ namespace Blogvio.WebApi.Dtos.Blog
 	public class BlogCreateDto
 	{
 		[Required]
-		public string Url { get; set; }
+		public string Name { get; set; }
 	}
 }

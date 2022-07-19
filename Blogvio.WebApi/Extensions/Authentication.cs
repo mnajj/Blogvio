@@ -1,15 +1,13 @@
-﻿using Blogvio.WebApi.Data;
-using Blogvio.WebApi.Models;
+﻿using System.Text;
+using Blogvio.WebApi.Data;
+using Blogvio.WebApi.Models.SQLServerModels;
 using Blogvio.WebApi.Security;
 using Blogvio.WebApi.Services;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Blogvio.WebApi.Models.SQLServerModels;
 
-namespace Blogvio.WebApi.Extenstions
+namespace Blogvio.WebApi.Extensions
 {
 	public static class Authentication
 	{
@@ -31,10 +29,10 @@ namespace Blogvio.WebApi.Extenstions
 			};
 			services.AddSingleton(tokenValidationParameters);
 			services.AddAuthentication(options =>
-			{
-				options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-				options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-			})
+				{
+					options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+					options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+				})
 				.AddJwtBearer(options =>
 				{
 					options.RequireHttpsMetadata = false;

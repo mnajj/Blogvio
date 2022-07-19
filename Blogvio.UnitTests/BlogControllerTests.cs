@@ -1,15 +1,15 @@
 ﻿using AutoMapper;
+using Blogvio.WebApi.Controllers.V1;
 using Blogvio.WebApi.Dtos.Blog;
+using Blogvio.WebApi.Dtos.Queries;
 using Blogvio.WebApi.Models;
+using Blogvio.WebApi.Repositories.IRepository;
+using Blogvio.WebApi.Services;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
 using System.Collections.Generic;
-using Blogvio.WebApi.Controllers.V1;
-using Blogvio.WebApi.Dtos.Queries;
-using Blogvio.WebApi.Repositories.IRepository;
-using Blogvio.WebApi.Services;
 using Xunit;
 
 namespace Blogvio.UnitTests
@@ -81,7 +81,7 @@ namespace Blogvio.UnitTests
 			// Arrange
 			BlogCreateDto blogToCreate = new()
 			{
-				Url = Guid.NewGuid().ToString(),
+				Name = Guid.NewGuid().ToString(),
 			};
 			var config = new MapperConfiguration(cfg =>
 			{
@@ -173,7 +173,7 @@ namespace Blogvio.UnitTests
 			{
 				Id = new Random().Next(),
 				//CreatedAt = DateTime.Now,
-				Url = Guid.NewGuid().ToString(),
+				Name = Guid.NewGuid().ToString(),
 				IsDeleted = false
 			};
 
@@ -184,26 +184,26 @@ namespace Blogvio.UnitTests
 				{
 					Id = new Random().Next(),
 					//CreatedAt = DateTime.Now,
-					Url = Guid.NewGuid().ToString(),
+					Name = Guid.NewGuid().ToString(),
 				},
 				new Blog()
 				{
 					Id = new Random().Next(),
 					//CreatedAt = DateTime.Now,
-					Url = Guid.NewGuid().ToString(),
+					Name = Guid.NewGuid().ToString(),
 				},
 				new Blog()
 				{
 					Id = new Random().Next(),
 					//CreatedAt = DateTime.Now,
-					Url = Guid.NewGuid().ToString(),
+					Name = Guid.NewGuid().ToString(),
 				}
 			};
 
 		private BlogUpdateDto CreateRandomBlogUpdateDto() =>
 			new()
 			{
-				Url = Guid.NewGuid().ToString(),
+				Name = Guid.NewGuid().ToString(),
 			};
 	}
 }

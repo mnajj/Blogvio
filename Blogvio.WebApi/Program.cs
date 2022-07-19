@@ -1,8 +1,8 @@
 using Blogvio.WebApi.Data;
 using Blogvio.WebApi.Extensions;
-using Blogvio.WebApi.Extenstions;
-using Blogvio.WebApi.Repositories;
-using Microsoft.EntityFrameworkCore;
+using Blogvio.WebApi.Filters;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Serilog.Exceptions;
 
@@ -14,20 +14,21 @@ ConfigureAppSettingsFile();
 ConfigureLogs();
 builder.Host.UseSerilog();
 builder.RegisterServices();
+builder.RegisterAllDbs();
+builder.Services.InstallCosmosDb(builder.Configuration);
 builder.Services.AddJWT(builder.Configuration);
-
-builder.Services.AddDbContext<AppDbContext>(options =>
-	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddFluentValidation(config =>
+	config.RegisterValidatorsFromAssemblyContaining<Program>());
+builder.Services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
 
 #endregion
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options => { options.Filters.Add<ValidationFilter>(); });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddElasticSearch(builder.Configuration);
-builder.Services.InstallCosmosDb(builder.Configuration);
+
 
 var app = builder.Build();
 
@@ -48,7 +49,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 PrebDb.PrepSqlServerDatabase(app);
-
 app.Run();
 
 #region Helper
