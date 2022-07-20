@@ -8,7 +8,7 @@ namespace Blogvio.WebApi.Dtos.Blog
 		public int Id { get; set; }
 
 		[Required]
-		public string Url { get; set; }
+		public string Name { get; set; }
 
 		[Required]
 		public DateTime CreatedAt { get; set; }

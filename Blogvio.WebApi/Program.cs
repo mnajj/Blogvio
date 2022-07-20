@@ -24,15 +24,16 @@ builder.Services.Configure<ApiBehaviorOptions>(options => { options.SuppressMode
 
 #endregion
 
-builder.Services.AddControllers(options => { options.Filters.Add<ValidationFilter>(); });
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddControllers(options =>
+{
+	options.Filters.Add<ValidationFilter>();
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 app.UseSerilogRequestLogging();
 
 if (app.Environment.IsDevelopment())

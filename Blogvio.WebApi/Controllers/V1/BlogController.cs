@@ -31,21 +31,22 @@ public class BlogController : ControllerBase
 	}
 
 	[HttpGet]
-	public async Task<ActionResult<IEnumerable<BlogReadDto>>> GetBlogsAsync([FromQuery] PaginationQuery paginationQuery)
+	public async Task<IActionResult> GetBlogsAsync([FromQuery] PaginationQuery paginationQuery)
 	{
 		var paginationFilter = _mapper.Map<PaginationFilter>(paginationQuery);
 		var blogs = await _repository.GetBlogsAsync(paginationFilter);
+
 		var blogsResponse = _mapper.Map<IEnumerable<BlogReadDto>>(blogs);
 
 		if (paginationFilter == null ||
-		    paginationFilter.PageNumber < 1 ||
-		    paginationFilter.PageSize < 1)
+				paginationFilter.PageNumber < 1 ||
+				paginationFilter.PageSize < 1)
 		{
 			return Ok(new PageResponse<BlogReadDto>(blogsResponse));
 		}
 
-		var paginationResponse = PaginationHelper.CreatePaginationResponse(
-			_uriService, paginationFilter, blogsResponse);
+		var paginationResponse = PaginationHelper
+			.CreatePaginationResponse(_uriService, paginationFilter, blogsResponse);
 		return Ok(paginationResponse);
 	}
 
