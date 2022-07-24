@@ -1,4 +1,5 @@
 ﻿using Blogvio.WebApi.Repositories;
+using Blogvio.WebApi.Repositories.CachedRepository;
 using Blogvio.WebApi.Repositories.IRepository;
 using Blogvio.WebApi.Repositories.Repository.SQLServer;
 using Blogvio.WebApi.Services;
@@ -10,6 +11,9 @@ public static class Services
 	public static void RegisterServices(this WebApplicationBuilder builder)
 	{
 		builder.Services.AddScoped<IBlogRepository, BlogRepository>();
+		builder.Services.Decorate<IBlogRepository, CachedBlogRepository>();
+
+
 		builder.Services.AddScoped<IPostRepository, PostRepository>();
 		builder.Services.AddSingleton<IUriService>(provider =>
 		{
@@ -21,6 +25,8 @@ public static class Services
 				request.Scheme, "://", request.Host.ToUriComponent(), "/");
 			return new UriService(absoluteUri);
 		});
+		builder.Services.AddSingleton<ICacheService, RedisCacheService>();
+
 
 		// builder.Services.Scan(s =>
 		// 	s.FromCallingAssembly()

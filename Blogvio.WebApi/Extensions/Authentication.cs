@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using Blogvio.WebApi.Data;
 using Blogvio.WebApi.Models.SQLServerModels;
-using Blogvio.WebApi.Security;
+using Blogvio.WebApi.Seetings;
 using Blogvio.WebApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;

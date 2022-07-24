@@ -88,6 +88,7 @@ public class BlogController : ControllerBase
 		}
 
 		var blogModel = _mapper.Map<Blog>(updateDto);
+		blogModel.Id = id;
 		await _repository.UpdateBlogAsync(blogModel);
 		if (!await _repository.SaveChangesAsync())
 		{

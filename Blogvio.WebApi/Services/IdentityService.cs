@@ -3,7 +3,6 @@ using Blogvio.WebApi.Data;
 using Blogvio.WebApi.Dtos.v1.Identity;
 using Blogvio.WebApi.Models;
 using Blogvio.WebApi.Models.Identity;
-using Blogvio.WebApi.Security;
 using Cosmonaut.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -12,6 +11,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Blogvio.WebApi.Models.SQLServerModels;
+using Blogvio.WebApi.Seetings;
 
 namespace Blogvio.WebApi.Services
 {

@@ -2,6 +2,7 @@
 using Blogvio.WebApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Nest;
+using StackExchange.Redis;
 
 namespace Blogvio.WebApi.Extensions;
 
@@ -53,11 +54,7 @@ public static class DatabasesExtenstion
 
 	public static void AddRedisDistributedCahce(this WebApplicationBuilder builder)
 	{
-		var connectionString = builder.Configuration["Redis:ConnectionString"];
-		builder.Services.AddStackExchangeRedisCache(opts =>
-		{
-			opts.Configuration = connectionString;
-			opts.InstanceName = "Blogvio";
-		});
+		builder.Services.AddSingleton<IConnectionMultiplexer>(prov =>
+			ConnectionMultiplexer.Connect(builder.Configuration["Redis:ConnectionString"]));
 	}
 }
