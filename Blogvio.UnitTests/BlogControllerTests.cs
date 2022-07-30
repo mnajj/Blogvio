@@ -2,9 +2,9 @@
 using Blogvio.WebApi.Controllers.V1;
 using Blogvio.WebApi.Dtos.Blog;
 using Blogvio.WebApi.Dtos.Queries;
+using Blogvio.WebApi.Infrastructure.Services;
 using Blogvio.WebApi.Models;
 using Blogvio.WebApi.Repositories.IRepository;
-using Blogvio.WebApi.Services;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;

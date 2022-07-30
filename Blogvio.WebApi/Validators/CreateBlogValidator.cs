@@ -8,5 +8,6 @@ public class CreateBlogValidator : AbstractValidator<BlogCreateDto>
 	public CreateBlogValidator()
 	{
 		RuleFor(x => x.Name).NotEmpty();
+		RuleFor(x => x.Name).MinimumLength(10);
 	}
 }

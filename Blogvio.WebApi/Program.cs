@@ -1,6 +1,6 @@
 using Blogvio.WebApi.Data;
 using Blogvio.WebApi.Extensions;
-using Blogvio.WebApi.Filters;
+using Blogvio.WebApi.Infrastructure.Filters;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -27,10 +27,9 @@ builder.Services.Configure<ApiBehaviorOptions>(options => { options.SuppressMode
 builder.Services.AddControllers(options =>
 {
 	options.Filters.Add<ValidationFilter>();
+	options.Filters.Add(new ApiExceptionFilterAttribute());
 });
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
+builder.AddAPIDocumentation();
 
 var app = builder.Build();
 

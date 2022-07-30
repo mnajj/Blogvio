@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Blogvio.WebApi.Data;
 using Blogvio.WebApi.Dtos.v1.Identity;
-using Blogvio.WebApi.Models;
 using Blogvio.WebApi.Models.Identity;
+using Blogvio.WebApi.Models.SQLServerModels;
+using Blogvio.WebApi.Seetings;
 using Cosmonaut.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -10,10 +11,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Blogvio.WebApi.Models.SQLServerModels;
-using Blogvio.WebApi.Seetings;
 
-namespace Blogvio.WebApi.Services
+namespace Blogvio.WebApi.Infrastructure.Services
 {
 	public class IdentityService : IIdentityService
 	{
@@ -245,7 +244,7 @@ namespace Blogvio.WebApi.Services
 		}
 
 		private bool IsJwtWithValidSecurityAlgorithm(SecurityToken validatedToken)
-			=> (validatedToken is JwtSecurityToken jwtSecurityToken) &&
+			=> validatedToken is JwtSecurityToken jwtSecurityToken &&
 					jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
 						StringComparison.InvariantCultureIgnoreCase);
 	}

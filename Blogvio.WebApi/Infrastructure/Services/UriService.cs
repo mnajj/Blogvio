@@ -1,7 +1,7 @@
 ﻿using Blogvio.WebApi.Dtos.Queries;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace Blogvio.WebApi.Services;
+namespace Blogvio.WebApi.Infrastructure.Services;
 
 public class UriService : IUriService
 {

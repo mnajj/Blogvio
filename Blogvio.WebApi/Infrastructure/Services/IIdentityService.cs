@@ -1,7 +1,7 @@
 ﻿using Blogvio.WebApi.Dtos.v1.Identity;
 using Blogvio.WebApi.Models.Identity;
 
-namespace Blogvio.WebApi.Services
+namespace Blogvio.WebApi.Infrastructure.Services
 {
 	public interface IIdentityService
 	{

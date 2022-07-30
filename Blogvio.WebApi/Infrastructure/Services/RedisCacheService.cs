@@ -1,7 +1,7 @@
 ﻿using StackExchange.Redis;
 using System.Text;
 
-namespace Blogvio.WebApi.Services;
+namespace Blogvio.WebApi.Infrastructure.Services;
 
 public class RedisCacheService : ICacheService
 {

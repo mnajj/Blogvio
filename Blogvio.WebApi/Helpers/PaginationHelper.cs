@@ -1,7 +1,7 @@
 ﻿using Blogvio.WebApi.Dtos.Queries;
+using Blogvio.WebApi.Infrastructure.Services;
 using Blogvio.WebApi.Models;
 using Blogvio.WebApi.Models.Response;
-using Blogvio.WebApi.Services;
 
 namespace Blogvio.WebApi.Helpers;
 

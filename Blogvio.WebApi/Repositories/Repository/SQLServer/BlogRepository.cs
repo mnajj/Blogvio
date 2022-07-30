@@ -26,7 +26,7 @@ namespace Blogvio.WebApi.Repositories.Repository.SQLServer
 			await Task.CompletedTask;
 		}
 
-		public async Task<Blog> GetBlogAsync(int id)
+		public async Task<Blog?> GetBlogAsync(int id)
 		{
 			return await _context.Blogs
 				.Where(b => b.Id == id &&

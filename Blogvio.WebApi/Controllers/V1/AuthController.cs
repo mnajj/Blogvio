@@ -1,6 +1,6 @@
 ﻿using Blogvio.WebApi.Dtos.v1.Identity;
+using Blogvio.WebApi.Infrastructure.Services;
 using Blogvio.WebApi.Models.Identity;
-using Blogvio.WebApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blogvio.WebApi.Controllers.V1

@@ -1,6 +1,6 @@
 ﻿using Blogvio.WebApi.Dtos.Queries;
 
-namespace Blogvio.WebApi.Services;
+namespace Blogvio.WebApi.Infrastructure.Services;
 
 public interface IUriService
 {
