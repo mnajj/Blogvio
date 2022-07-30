@@ -15,7 +15,7 @@ ConfigureLogs();
 builder.Host.UseSerilog();
 builder.RegisterServices();
 builder.RegisterAllDbs();
-builder.Services.InstallCosmosDb(builder.Configuration);
+// builder.Services.InstallCosmosDb(builder.Configuration);
 builder.Services.AddJWT(builder.Configuration);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddFluentValidation(config =>

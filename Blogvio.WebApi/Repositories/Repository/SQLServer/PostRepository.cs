@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Blogvio.WebApi.Data;
+using Blogvio.WebApi.Interfaces;
 using Blogvio.WebApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Nest;
@@ -38,7 +39,7 @@ namespace Blogvio.WebApi.Repositories.Repository.SQLServer
 			post.IsDeleted = true;
 		}
 
-		public async Task<Post> GetPostAsync(int blogId, int postId)
+		public async Task<Post?> GetPostAsync(int blogId, int postId)
 		{
 			return await _context
 				.Posts
@@ -48,11 +49,20 @@ namespace Blogvio.WebApi.Repositories.Repository.SQLServer
 					!p.IsDeleted);
 		}
 
-		public async Task<IEnumerable<Post>> GetPostsForBlogAsync(int blogId)
+		public async Task<IEnumerable<Post>> GetPostsForBlogAsync(int blogId, PaginationFilter? paginationFilter)
 		{
+			if (paginationFilter is null)
+			{
+				return await _context.Posts
+					.Where(p => p.BlogId == blogId
+					&& !p.IsDeleted)
+					.ToListAsync();
+			}
+			var skip = (paginationFilter.PageNumber - 1) * paginationFilter.PageSize;
 			return await _context.Posts
-				.Where(p => p.BlogId == blogId
-				&& !p.IsDeleted)
+				.Where(b => !b.IsDeleted)
+				.Skip(skip)
+				.Take(paginationFilter.PageSize)
 				.ToListAsync();
 		}
 
@@ -72,7 +82,7 @@ namespace Blogvio.WebApi.Repositories.Repository.SQLServer
 			exPost.UpdatedAt = DateTime.Now;
 		}
 
-		public async Task<bool> BlogExist(int blogId)
+		public async Task<bool> IsBlogExist(int blogId)
 		{
 			return await _context
 				.Blogs

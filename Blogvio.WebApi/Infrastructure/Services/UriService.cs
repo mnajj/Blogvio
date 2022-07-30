@@ -1,4 +1,5 @@
 ﻿using Blogvio.WebApi.Dtos.Queries;
+using Blogvio.WebApi.Interfaces;
 using Microsoft.AspNetCore.WebUtilities;
 
 namespace Blogvio.WebApi.Infrastructure.Services;

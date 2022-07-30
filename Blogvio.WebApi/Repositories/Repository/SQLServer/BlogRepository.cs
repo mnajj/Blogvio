@@ -1,6 +1,6 @@
 ﻿using Blogvio.WebApi.Data;
+using Blogvio.WebApi.Interfaces;
 using Blogvio.WebApi.Models;
-using Blogvio.WebApi.Repositories.IRepository;
 using Microsoft.EntityFrameworkCore;
 
 namespace Blogvio.WebApi.Repositories.Repository.SQLServer

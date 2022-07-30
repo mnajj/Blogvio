@@ -4,10 +4,9 @@ using Blogvio.WebApi.Dtos.Blog;
 using Blogvio.WebApi.Dtos.Queries;
 using Blogvio.WebApi.Helpers;
 using Blogvio.WebApi.Infrastructure.Exceptions;
-using Blogvio.WebApi.Infrastructure.Services;
+using Blogvio.WebApi.Interfaces;
 using Blogvio.WebApi.Models;
 using Blogvio.WebApi.Models.Response;
-using Blogvio.WebApi.Repositories.IRepository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blogvio.WebApi.Controllers.V1;

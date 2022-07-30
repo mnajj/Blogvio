@@ -1,5 +1,5 @@
 ﻿using Blogvio.WebApi.Dtos.Queries;
-using Blogvio.WebApi.Infrastructure.Services;
+using Blogvio.WebApi.Interfaces;
 using Blogvio.WebApi.Models;
 using Blogvio.WebApi.Models.Response;
 
@@ -7,7 +7,9 @@ namespace Blogvio.WebApi.Helpers;
 
 public static class PaginationHelper
 {
-	public static PageResponse<T> CreatePaginationResponse<T>(IUriService uriService, PaginationFilter paginationFilter,
+	public static PageResponse<T> CreatePaginationResponse<T>(
+		IUriService uriService,
+		PaginationFilter paginationFilter,
 		IEnumerable<T> response)
 	{
 		var nextPage = paginationFilter.PageNumber >= 1

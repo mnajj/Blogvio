@@ -1,6 +1,5 @@
-﻿using Blogvio.WebApi.Infrastructure.Services;
+﻿using Blogvio.WebApi.Interfaces;
 using Blogvio.WebApi.Models;
-using Blogvio.WebApi.Repositories.IRepository;
 using System.Text;
 using System.Text.Json;
 
@@ -54,24 +53,17 @@ public class CachedBlogRepository : IBlogRepository
 		}
 
 		var blogs = await _blogRepository.GetBlogsAsync(paginationFilter);
-		try
+		StringBuilder pageKeys = new StringBuilder();
+		foreach (var blog in blogs)
 		{
-			StringBuilder pageKeys = new StringBuilder();
-			foreach (var blog in blogs)
-			{
-				await _cacheService.SetCacheValueAsync(
-					$"blog:{blog.Id}",
-					JsonSerializer.Serialize(blog));
-				pageKeys.Append($"blog:{blog.Id},");
-			}
 			await _cacheService.SetCacheValueAsync(
-				$"page:{paginationFilter.PageNumber}",
-				pageKeys.ToString().TrimEnd(','));
+				$"blog:{blog.Id}",
+				JsonSerializer.Serialize(blog));
+			pageKeys.Append($"blog:{blog.Id},");
 		}
-		catch (Exception ex)
-		{
-
-		}
+		await _cacheService.SetCacheValueAsync(
+			$"page:{paginationFilter.PageNumber}",
+			pageKeys.ToString().TrimEnd(','));
 		return blogs;
 	}
 

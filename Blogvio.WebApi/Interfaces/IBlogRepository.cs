@@ -1,6 +1,6 @@
 ﻿using Blogvio.WebApi.Models;
 
-namespace Blogvio.WebApi.Repositories.IRepository
+namespace Blogvio.WebApi.Interfaces
 {
 	public interface IBlogRepository
 	{

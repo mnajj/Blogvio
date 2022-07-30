@@ -1,7 +1,6 @@
 ﻿using Blogvio.WebApi.Infrastructure.Services;
-using Blogvio.WebApi.Repositories;
+using Blogvio.WebApi.Interfaces;
 using Blogvio.WebApi.Repositories.CachedRepository;
-using Blogvio.WebApi.Repositories.IRepository;
 using Blogvio.WebApi.Repositories.Repository.SQLServer;
 
 namespace Blogvio.WebApi.Extensions;

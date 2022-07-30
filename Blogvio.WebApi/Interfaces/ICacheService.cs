@@ -1,4 +1,4 @@
-﻿namespace Blogvio.WebApi.Infrastructure.Services;
+﻿namespace Blogvio.WebApi.Interfaces;
 
 public interface ICacheService
 {

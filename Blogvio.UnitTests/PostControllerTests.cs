@@ -2,7 +2,6 @@
 using Blogvio.WebApi.Controllers;
 using Blogvio.WebApi.Dtos.Post;
 using Blogvio.WebApi.Models;
-using Blogvio.WebApi.Repositories;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -10,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using Blogvio.WebApi.Controllers.V1;
 using Xunit;
+using Blogvio.WebApi.Interfaces;
 
 namespace Blogvio.UnitTests
 {
