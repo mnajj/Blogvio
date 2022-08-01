@@ -1,4 +1,4 @@
-﻿namespace Blogvio.WebApi.Seetings;
+﻿namespace Blogvio.WebApi.Settings;
 
 public class JWT
 {

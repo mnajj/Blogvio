@@ -1,12 +1,10 @@
-﻿using AutoMapper;
+﻿using Blogvio.WebApi.Commands;
 using Blogvio.WebApi.Contracts.V1;
 using Blogvio.WebApi.Dtos.Blog;
 using Blogvio.WebApi.Dtos.Queries;
-using Blogvio.WebApi.Helpers;
-using Blogvio.WebApi.Infrastructure.Exceptions;
-using Blogvio.WebApi.Interfaces;
-using Blogvio.WebApi.Models;
 using Blogvio.WebApi.Models.Response;
+using Blogvio.WebApi.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blogvio.WebApi.Controllers.V1;
@@ -16,19 +14,11 @@ namespace Blogvio.WebApi.Controllers.V1;
 [Produces("application/json")]
 public class BlogController : ControllerBase
 {
-	private readonly IBlogRepository _repository;
-	private readonly IMapper _mapper;
-	private readonly IUriService _uriService;
+	private readonly IMediator _mediator;
 
-	public BlogController(
-		IBlogRepository repository,
-		IMapper mapper,
-		IUriService uriService
-	)
+	public BlogController(IMediator mediator)
 	{
-		_repository = repository;
-		_mapper = mapper;
-		_uriService = uriService;
+		_mediator = mediator;
 	}
 
 	/// <summary>Get all blogs</summary>
@@ -36,21 +26,8 @@ public class BlogController : ControllerBase
 	[ProducesResponseType(typeof(PageResponse<BlogReadDto>), 200)]
 	public async Task<IActionResult> GetBlogsAsync([FromQuery] PaginationQuery paginationQuery)
 	{
-		var paginationFilter = _mapper.Map<PaginationFilter>(paginationQuery);
-		var blogs = await _repository.GetBlogsAsync(paginationFilter);
-
-		var blogsResponse = _mapper.Map<IEnumerable<BlogReadDto>>(blogs);
-
-		if (paginationFilter == null ||
-				paginationFilter.PageNumber < 1 ||
-				paginationFilter.PageSize < 1)
-		{
-			return Ok(new PageResponse<BlogReadDto>(blogsResponse));
-		}
-
-		var paginationResponse = PaginationHelper
-			.CreatePaginationResponse(_uriService, paginationFilter, blogsResponse);
-		return Ok(paginationResponse);
+		var result = await _mediator.Send(new GetBlogsQuery(paginationQuery));
+		return Ok(result);
 	}
 
 	/// <summary>Get blog by id</summary>
@@ -59,14 +36,9 @@ public class BlogController : ControllerBase
 	[ProducesResponseType(typeof(ProblemDetails), 404)]
 	public async Task<ActionResult> GetBlogByIdAsync(int id)
 	{
-		var blog = await _repository.GetBlogAsync(id);
-		if (blog is null)
-		{
-			throw new EntityNotFoundException();
-		}
-		var response = new Response<BlogReadDto>(
-			_mapper.Map<BlogReadDto>(blog));
-		return Ok(response);
+		var result = await _mediator.Send(
+			new GetBlogByIdQuery(id));
+		return Ok(result);
 	}
 
 	/// <summary>Create new blog</summary>
@@ -76,35 +48,15 @@ public class BlogController : ControllerBase
 	[ProducesResponseType(typeof(ProblemDetails), 500)]
 	public async Task<ActionResult> CreateBlogAsync(BlogCreateDto blogDto)
 	{
-		var blogModel = _mapper.Map<Blog>(blogDto);
-		await _repository.CreateBlogAsync(blogModel);
-		if (!await _repository.SaveChangesAsync())
-		{
-			throw new DbCommitFailException();
-		}
-
-		var response = new Response<BlogReadDto>(_mapper.Map<BlogReadDto>(blogModel));
-		return CreatedAtRoute(nameof(GetBlogByIdAsync), new { Id = blogModel.Id }, response);
+		var result = await _mediator.Send(new CreateBlogCommand(blogDto));
+		return CreatedAtRoute(nameof(GetBlogByIdAsync), new { Id = result.Data.Id }, result);
 	}
 
 	/// <summary>Update blog by id</summary>
 	[HttpPut(ApiRoutesV1.Blogs.UpdateBlogAsync)]
 	public async Task<ActionResult> UpdateBlogAsync(int id, BlogUpdateDto updateDto)
 	{
-		var existingBlog = await _repository.GetBlogAsync(id);
-		if (existingBlog is null)
-		{
-			throw new EntityNotFoundException();
-		}
-
-		var blogModel = _mapper.Map<Blog>(updateDto);
-		blogModel.Id = id;
-		await _repository.UpdateBlogAsync(blogModel);
-		if (!await _repository.SaveChangesAsync())
-		{
-			throw new DbCommitFailException();
-		}
-
+		await _mediator.Send(new UpdateBlogCommand(id, updateDto));
 		return NoContent();
 	}
 
@@ -112,18 +64,7 @@ public class BlogController : ControllerBase
 	[HttpDelete(ApiRoutesV1.Blogs.DeleteBlogAsync)]
 	public async Task<ActionResult> DeleteBlogAsync(int id)
 	{
-		var existningBlog = await _repository.GetBlogAsync(id);
-		if (existningBlog is null)
-		{
-			throw new EntityNotFoundException();
-		}
-
-		await _repository.DeleteBlogAsync(id);
-		if (!await _repository.SaveChangesAsync())
-		{
-			throw new DbCommitFailException();
-		}
-
+		await _mediator.Send(new DeleteBlogCommand(id));
 		return NoContent();
 	}
 }

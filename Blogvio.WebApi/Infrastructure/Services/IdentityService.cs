@@ -4,7 +4,7 @@ using Blogvio.WebApi.Dtos.v1.Identity;
 using Blogvio.WebApi.Interfaces;
 using Blogvio.WebApi.Models.Identity;
 using Blogvio.WebApi.Models.SQLServerModels;
-using Blogvio.WebApi.Seetings;
+using Blogvio.WebApi.Settings;
 using Cosmonaut.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
